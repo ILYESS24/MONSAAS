@@ -8,6 +8,9 @@ Aurion Studio follows a **feature-based modular architecture** with clear separa
 
 ```
 src/
+├── apps/                # 🆕 Micro-frontend applications
+│   └── index.ts        # App registry and event bus
+│
 ├── components/          # Reusable UI components
 │   ├── auth/           # Authentication components
 │   ├── common/         # Shared components (ErrorBoundary, etc.)
@@ -39,6 +42,7 @@ src/
 │   ├── api.ts          # API client
 │   ├── logger.ts       # Logging utility
 │   ├── validation.ts   # Form validation
+│   ├── queryClient.ts  # 🆕 React Query configuration
 │   └── ...
 │
 ├── pages/              # Page components
@@ -47,7 +51,7 @@ src/
 │   └── ...
 │
 ├── providers/          # Application providers
-│   └── AppProviders.tsx # Combined providers
+│   └── AppProviders.tsx # Combined providers (includes React Query)
 │
 ├── router/             # Routing configuration
 │   ├── routes.ts       # Route definitions
@@ -57,6 +61,9 @@ src/
 │   ├── api.service.ts  # API service layer
 │   ├── auth.service.ts # Authentication service
 │   └── analytics.service.ts
+│
+├── store/              # 🆕 Zustand state management
+│   └── index.ts        # Global stores (App, User, Dashboard, Notifications)
 │
 ├── types/              # TypeScript type definitions
 │   └── supabase.ts     # Database types
@@ -74,27 +81,46 @@ src/
 - **Pages**: Container components that connect to services
 - **Layouts**: Structural components that wrap pages
 
-### 2. State Management (contexts/, hooks/)
+### 2. State Management (store/, contexts/, hooks/)
 
-- **Contexts**: Global state using React Context
+- **Zustand Stores**: Global state with persistence and devtools
+  - `useAppStore`: Theme, sidebar, loading states
+  - `useUserStore`: User authentication state
+  - `useDashboardStore`: Dashboard data and statistics
+  - `useNotificationStore`: Notification management
+- **Contexts**: React Context for provider-based state
 - **Hooks**: Encapsulated state logic and side effects
 
-### 3. Service Layer (services/)
+### 3. Data Fetching (lib/queryClient.ts)
+
+- **React Query**: Server state management
+  - Automatic caching (5 min stale, 30 min cache)
+  - Background refetching
+  - Retry with exponential backoff
+  - Query key management via `queryKeys` object
+
+### 4. Service Layer (services/)
 
 - **API Services**: Data fetching and manipulation
 - **Auth Service**: Authentication operations
 - **Analytics Service**: Event tracking
 
-### 4. Utility Layer (lib/)
+### 5. Utility Layer (lib/)
 
 - **API Client**: HTTP request handling
 - **Logger**: Centralized logging
 - **Validation**: Form and data validation
 
-### 5. Configuration Layer (config/, constants/)
+### 6. Configuration Layer (config/, constants/)
 
 - **Config**: Environment-specific settings
 - **Constants**: Static values and enums
+
+### 7. Micro-Frontend Layer (apps/)
+
+- **App Registry**: Centralized app definitions
+- **Event Bus**: Inter-app communication
+- **Shared Modules**: Code sharing between apps
 
 ## Design Patterns
 
@@ -131,6 +157,44 @@ Complex UI from composable parts:
 </Card>
 ```
 
+### 6. Zustand Store Pattern (NEW)
+Global state with type-safe selectors:
+```typescript
+// Using the store
+const theme = useAppStore((state) => state.theme);
+const setTheme = useAppStore((state) => state.setTheme);
+
+// With selectors for optimization
+const stats = useDashboardStore(selectStats);
+```
+
+### 7. React Query Pattern (NEW)
+Data fetching with automatic caching:
+```typescript
+// Query keys for cache management
+import { queryKeys } from '@/lib/queryClient';
+
+// Using queries
+const { data, isLoading } = useQuery({
+  queryKey: queryKeys.dashboard.stats(),
+  queryFn: fetchDashboardStats,
+});
+```
+
+### 8. Event Bus Pattern (NEW)
+Inter-app communication:
+```typescript
+import { eventBus, AppEvents } from '@/apps';
+
+// Subscribe to events
+const unsubscribe = eventBus.on(AppEvents.DASHBOARD_REFRESH, (data) => {
+  console.log('Dashboard refresh requested', data);
+});
+
+// Emit events
+eventBus.emit(AppEvents.STATS_UPDATED, { totalSales: 25000 });
+```
+
 ## Data Flow
 
 ```
@@ -139,6 +203,18 @@ User Action → Component → Hook/Context → Service → API
             State Update
                 ↓
         Component Re-render
+```
+
+### Enhanced Data Flow with React Query & Zustand
+
+```
+User Action
+    ↓
+Component → useQuery (React Query) → API → Cache
+    ↓
+Zustand Store (client state) ← Server Response
+    ↓
+Component Re-render
 ```
 
 ## Security Architecture

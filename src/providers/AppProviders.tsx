@@ -3,6 +3,13 @@
  * 
  * Application-wide providers wrapped in a single component.
  * Simplifies the provider hierarchy in main.tsx.
+ * 
+ * Includes:
+ * - React Query for data fetching
+ * - Clerk for authentication
+ * - App context for global state
+ * - Notification context
+ * - Error boundary
  */
 
 import { ReactNode } from 'react';
@@ -10,7 +17,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { AppProvider, NotificationProvider } from '@/contexts';
 import { ErrorBoundary } from '@/components/common';
-import { getClerkPublishableKey, getEnvConfig } from '@/lib/env';
+import { QueryProvider } from '@/lib/queryClient';
+import { getClerkPublishableKey } from '@/lib/env';
 import { logger } from '@/lib/logger';
 
 interface AppProvidersProps {
@@ -62,11 +70,13 @@ function ConfigurationError() {
 function CoreProviders({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
-      <AppProvider>
-        <NotificationProvider>
-          {children}
-        </NotificationProvider>
-      </AppProvider>
+      <QueryProvider>
+        <AppProvider>
+          <NotificationProvider>
+            {children}
+          </NotificationProvider>
+        </AppProvider>
+      </QueryProvider>
     </ErrorBoundary>
   );
 }
