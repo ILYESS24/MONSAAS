@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Users, Target, Zap, Globe, Award, TrendingUp, Shield, Clock } from "lucide-react";
 import LavaLampBackground from "@/components/fabrica/LavaLampBackground";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const teamMembers = [
   {
@@ -80,6 +81,9 @@ const milestones = [
 const About = () => {
   return (
     <div className="relative min-h-screen bg-black text-white font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.about} />
+      
       <LavaLampBackground />
       
       {/* SEO Schema */}

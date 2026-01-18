@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight, Calendar, Clock, Search, Tag } from "lucide-react";
 import LavaLampBackground from "@/components/fabrica/LavaLampBackground";
 import { useState } from "react";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const blogPosts = [
   {
@@ -86,6 +87,9 @@ const Blog = () => {
 
   return (
     <div className="relative min-h-screen bg-black text-white font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.blog} />
+      
       <LavaLampBackground />
       
       {/* SEO Schema */}

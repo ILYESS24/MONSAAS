@@ -6,6 +6,7 @@
 
 import { Link } from "react-router-dom";
 import { ArrowLeft, Cookie, Settings, BarChart3, Target, Shield, Info } from "lucide-react";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const Cookies = () => {
   const lastUpdate = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -47,6 +48,9 @@ const Cookies = () => {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 md:px-12 lg:px-16 py-12">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.cookies} />
+      
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" />

@@ -12,6 +12,7 @@ import {
   useTasksDueToday,
   formatRelativeTime 
 } from "@/hooks/useLiveData";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -280,6 +281,9 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.dashboard} />
+      
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {sidebarOpen && (

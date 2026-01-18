@@ -8,6 +8,7 @@ import { SignUp as ClerkSignUp } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Check, Zap, Shield, Clock } from "lucide-react";
 import LavaLampBackground from "@/components/fabrica/LavaLampBackground";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const benefits = [
   "Accès immédiat aux 5 outils",
@@ -19,6 +20,9 @@ const benefits = [
 const SignUp = () => {
   return (
     <div className="relative min-h-screen bg-black flex flex-col lg:flex-row items-center justify-center px-6 py-12 font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.signUp} />
+      
       <LavaLampBackground />
 
       <div className="absolute top-6 left-6 z-20">

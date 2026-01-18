@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Mail, MapPin, Phone, Send, CheckCircle, MessageCircle, Clock, Zap, HeadphonesIcon } from "lucide-react";
 import LavaLampBackground from "@/components/fabrica/LavaLampBackground";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const contactReasons = [
   { value: "", label: "Comment pouvons-nous vous aider ?" },
@@ -46,6 +47,9 @@ const Contact = () => {
 
   return (
     <div className="relative min-h-screen bg-black text-white font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.contact} />
+      
       <LavaLampBackground />
       
       {/* SEO Schema */}

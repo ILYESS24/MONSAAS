@@ -8,10 +8,14 @@ import { SignIn as ClerkSignIn } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Shield, Zap, Users } from "lucide-react";
 import LavaLampBackground from "@/components/fabrica/LavaLampBackground";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 const SignIn = () => {
   return (
     <div className="relative min-h-screen bg-black flex flex-col items-center justify-center px-6 py-12 font-body">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.signIn} />
+      
       <LavaLampBackground />
 
       <div className="absolute top-6 left-6 z-20">

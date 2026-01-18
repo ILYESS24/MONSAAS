@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, X, Zap, Shield, Crown, Rocket, ArrowRight, Star, Users, Clock, MessageCircle } from 'lucide-react';
+import { SEO, seoConfigs } from '@/components/common/SEO';
 
 // =============================================================================
 // TYPES
@@ -286,6 +287,9 @@ const Pricing: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white">
+      {/* SEO Component */}
+      <SEO {...seoConfigs.pricing} />
+      
       {/* SEO Schema */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
