@@ -7,14 +7,17 @@
     "skipLibCheck": true,
     "noEmitOnError": false,
 
+    /* Module Resolution */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
 
-    /* Strict Type-Checking Options - Progressive enablement */
+    /* Strict Type-Checking - Progressive enablement */
     "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -26,11 +29,13 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
 
+    /* Path Mapping */
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
-  "exclude": [],
+  "exclude": ["node_modules", "dist"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

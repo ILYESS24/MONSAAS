@@ -28,43 +28,108 @@ export interface PlanLimits {
     readOnly: boolean;
     aiAutocomplete: boolean;
     githubSync: boolean;
+    linting: boolean;
+    formatting: boolean;
+    multiFile: boolean;
+    collaboration: boolean;
   };
   textEditor: {
     enabled: boolean;
     features: 'basic' | 'standard' | 'full';
     exportFormats: string[];
+    aiWritingAssist: boolean;
+    collaboration: boolean;
+    versionHistory: boolean;
   };
   intelligentCanvas: {
     enabled: boolean;
     maxBoards: number;
+    maxElementsPerBoard: number;
+    exportFormats: string[];
+    collaboration: boolean;
+    templates: boolean;
   };
   aurionChat: {
     enabled: boolean;
     maxMessagesPerDay: number;
+    advancedModels: boolean;
+    contextMemory: boolean;
+    codeExecution: boolean;
+    fileAttachments: boolean;
   };
   agentAI: {
     enabled: boolean;
     maxRequestsPerMonth: number;
+    advancedModels: boolean;
+    codeGeneration: boolean;
+    codeReview: boolean;
+    fineTuning: boolean;
+    customInstructions: boolean;
+    batchProcessing: boolean;
   };
   appBuilder: {
     enabled: boolean;
-    features: 'none' | 'prototype' | 'deploy';
+    features: 'none' | 'prototype' | 'deploy' | 'enterprise';
+    maxApps: number;
+    customDomains: boolean;
+    apiIntegrations: boolean;
+    analytics: boolean;
+    whiteLabel: boolean;
   };
   workflow: {
     enabled: boolean;
     maxWorkflows: number;
+    maxStepsPerWorkflow: number;
+    scheduling: boolean;
+    webhooks: boolean;
+    advancedConditions: boolean;
+    parallelExecution: boolean;
   };
   monitoring: {
     enabled: boolean;
+    maxEndpoints: number;
+    alertsEnabled: boolean;
+    customAlerts: boolean;
+    apiAccess: boolean;
+    historicalData: number; // days
+  };
+  
+  // Additional features
+  support: {
+    level: 'community' | 'email' | 'priority' | 'dedicated';
+    responseTime: string;
+    phone: boolean;
+    slack: boolean;
+  };
+  security: {
+    sso: boolean;
+    saml: boolean;
+    scim: boolean;
+    auditLogs: boolean;
+    ipWhitelist: boolean;
+    customRoles: boolean;
+    mfa: boolean;
+  };
+  integrations: {
+    maxIntegrations: number;
+    premiumIntegrations: boolean;
+    customWebhooks: boolean;
+    apiAccess: boolean;
+    rateLimitPerMinute: number;
   };
 }
 
 export interface SubscriptionPlan {
   id: SubscriptionPlanId;
   name: string;
+  displayName: string;
   price: number;
+  yearlyPrice: number;
   period: 'month' | 'year';
   limits: PlanLimits;
+  badge?: string;
+  highlighted?: boolean;
+  enterprise?: boolean;
 }
 
 export interface UsageData {
@@ -77,6 +142,8 @@ export interface UsageData {
   agentAIRequestsThisMonth: number;
   canvasBoardsCount: number;
   workflowsCount: number;
+  appsCount: number;
+  integrationsCount: number;
   
   // Last reset dates
   lastDailyReset: string; // ISO date
@@ -91,7 +158,9 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanId, SubscriptionPlan> = 
   free: {
     id: 'free',
     name: 'Découverte',
+    displayName: 'Découverte',
     price: 0,
+    yearlyPrice: 0,
     period: 'month',
     limits: {
       maxProjects: 2,
@@ -101,42 +170,103 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanId, SubscriptionPlan> = 
         readOnly: true,
         aiAutocomplete: false,
         githubSync: false,
+        linting: true,
+        formatting: true,
+        multiFile: false,
+        collaboration: false,
       },
       textEditor: {
         enabled: true,
         features: 'basic',
         exportFormats: ['txt'],
+        aiWritingAssist: false,
+        collaboration: false,
+        versionHistory: false,
       },
       intelligentCanvas: {
         enabled: true,
         maxBoards: 3,
+        maxElementsPerBoard: 50,
+        exportFormats: ['png'],
+        collaboration: false,
+        templates: false,
       },
       aurionChat: {
         enabled: true,
         maxMessagesPerDay: 10,
+        advancedModels: false,
+        contextMemory: false,
+        codeExecution: false,
+        fileAttachments: false,
       },
       agentAI: {
         enabled: false,
         maxRequestsPerMonth: 0,
+        advancedModels: false,
+        codeGeneration: false,
+        codeReview: false,
+        fineTuning: false,
+        customInstructions: false,
+        batchProcessing: false,
       },
       appBuilder: {
         enabled: false,
         features: 'none',
+        maxApps: 0,
+        customDomains: false,
+        apiIntegrations: false,
+        analytics: false,
+        whiteLabel: false,
       },
       workflow: {
         enabled: false,
         maxWorkflows: 0,
+        maxStepsPerWorkflow: 0,
+        scheduling: false,
+        webhooks: false,
+        advancedConditions: false,
+        parallelExecution: false,
       },
       monitoring: {
         enabled: false,
+        maxEndpoints: 0,
+        alertsEnabled: false,
+        customAlerts: false,
+        apiAccess: false,
+        historicalData: 0,
+      },
+      support: {
+        level: 'community',
+        responseTime: '72h',
+        phone: false,
+        slack: false,
+      },
+      security: {
+        sso: false,
+        saml: false,
+        scim: false,
+        auditLogs: false,
+        ipWhitelist: false,
+        customRoles: false,
+        mfa: false,
+      },
+      integrations: {
+        maxIntegrations: 2,
+        premiumIntegrations: false,
+        customWebhooks: false,
+        apiAccess: false,
+        rateLimitPerMinute: 10,
       },
     },
   },
   creator: {
     id: 'creator',
     name: 'Creator',
+    displayName: 'Creator',
     price: 12,
+    yearlyPrice: 120, // 2 months free
     period: 'month',
+    badge: '💰 Meilleur rapport',
     limits: {
       maxProjects: 10,
       maxStorageMB: 5120, // 5 Go
@@ -145,42 +275,104 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanId, SubscriptionPlan> = 
         readOnly: false,
         aiAutocomplete: true,
         githubSync: false,
+        linting: true,
+        formatting: true,
+        multiFile: true,
+        collaboration: false,
       },
       textEditor: {
         enabled: true,
         features: 'standard',
         exportFormats: ['txt', 'pdf', 'png'],
+        aiWritingAssist: true,
+        collaboration: false,
+        versionHistory: true,
       },
       intelligentCanvas: {
         enabled: true,
         maxBoards: 10,
+        maxElementsPerBoard: 200,
+        exportFormats: ['png', 'svg', 'pdf'],
+        collaboration: false,
+        templates: true,
       },
       aurionChat: {
         enabled: true,
         maxMessagesPerDay: 100,
+        advancedModels: false,
+        contextMemory: true,
+        codeExecution: false,
+        fileAttachments: true,
       },
       agentAI: {
         enabled: true,
         maxRequestsPerMonth: 50,
+        advancedModels: false,
+        codeGeneration: true,
+        codeReview: false,
+        fineTuning: false,
+        customInstructions: false,
+        batchProcessing: false,
       },
       appBuilder: {
         enabled: true,
         features: 'prototype',
+        maxApps: 3,
+        customDomains: false,
+        apiIntegrations: false,
+        analytics: false,
+        whiteLabel: false,
       },
       workflow: {
         enabled: false,
         maxWorkflows: 0,
+        maxStepsPerWorkflow: 0,
+        scheduling: false,
+        webhooks: false,
+        advancedConditions: false,
+        parallelExecution: false,
       },
       monitoring: {
         enabled: false,
+        maxEndpoints: 0,
+        alertsEnabled: false,
+        customAlerts: false,
+        apiAccess: false,
+        historicalData: 0,
+      },
+      support: {
+        level: 'email',
+        responseTime: '24h',
+        phone: false,
+        slack: false,
+      },
+      security: {
+        sso: false,
+        saml: false,
+        scim: false,
+        auditLogs: false,
+        ipWhitelist: false,
+        customRoles: false,
+        mfa: true,
+      },
+      integrations: {
+        maxIntegrations: 5,
+        premiumIntegrations: false,
+        customWebhooks: true,
+        apiAccess: false,
+        rateLimitPerMinute: 30,
       },
     },
   },
   pro: {
     id: 'pro',
     name: 'Pro',
+    displayName: 'Pro',
     price: 39,
+    yearlyPrice: 390, // 2 months free
     period: 'month',
+    badge: '⚡ 73% choisissent ce plan',
+    highlighted: true,
     limits: {
       maxProjects: Infinity,
       maxStorageMB: 51200, // 50 Go
@@ -189,42 +381,104 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanId, SubscriptionPlan> = 
         readOnly: false,
         aiAutocomplete: true,
         githubSync: true,
+        linting: true,
+        formatting: true,
+        multiFile: true,
+        collaboration: true,
       },
       textEditor: {
         enabled: true,
         features: 'full',
         exportFormats: ['txt', 'pdf', 'png', 'docx', 'html'],
+        aiWritingAssist: true,
+        collaboration: true,
+        versionHistory: true,
       },
       intelligentCanvas: {
         enabled: true,
         maxBoards: Infinity,
+        maxElementsPerBoard: 1000,
+        exportFormats: ['png', 'svg', 'pdf', 'json'],
+        collaboration: true,
+        templates: true,
       },
       aurionChat: {
         enabled: true,
         maxMessagesPerDay: Infinity,
+        advancedModels: true,
+        contextMemory: true,
+        codeExecution: true,
+        fileAttachments: true,
       },
       agentAI: {
         enabled: true,
         maxRequestsPerMonth: 500,
+        advancedModels: true,
+        codeGeneration: true,
+        codeReview: true,
+        fineTuning: false,
+        customInstructions: true,
+        batchProcessing: false,
       },
       appBuilder: {
         enabled: true,
         features: 'deploy',
+        maxApps: 10,
+        customDomains: true,
+        apiIntegrations: true,
+        analytics: true,
+        whiteLabel: false,
       },
       workflow: {
         enabled: true,
         maxWorkflows: 20,
+        maxStepsPerWorkflow: 50,
+        scheduling: true,
+        webhooks: true,
+        advancedConditions: true,
+        parallelExecution: false,
       },
       monitoring: {
         enabled: true,
+        maxEndpoints: 20,
+        alertsEnabled: true,
+        customAlerts: true,
+        apiAccess: false,
+        historicalData: 30,
+      },
+      support: {
+        level: 'priority',
+        responseTime: '4h',
+        phone: false,
+        slack: true,
+      },
+      security: {
+        sso: true,
+        saml: false,
+        scim: false,
+        auditLogs: true,
+        ipWhitelist: false,
+        customRoles: false,
+        mfa: true,
+      },
+      integrations: {
+        maxIntegrations: 20,
+        premiumIntegrations: true,
+        customWebhooks: true,
+        apiAccess: true,
+        rateLimitPerMinute: 100,
       },
     },
   },
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
+    displayName: 'Enterprise',
     price: 149,
+    yearlyPrice: 1490, // 2 months free
     period: 'month',
+    badge: 'SLA 99.9%',
+    enterprise: true,
     limits: {
       maxProjects: Infinity,
       maxStorageMB: Infinity,
@@ -233,34 +487,92 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionPlanId, SubscriptionPlan> = 
         readOnly: false,
         aiAutocomplete: true,
         githubSync: true,
+        linting: true,
+        formatting: true,
+        multiFile: true,
+        collaboration: true,
       },
       textEditor: {
         enabled: true,
         features: 'full',
-        exportFormats: ['txt', 'pdf', 'png', 'docx', 'html', 'md'],
+        exportFormats: ['txt', 'pdf', 'png', 'docx', 'html', 'md', 'odt'],
+        aiWritingAssist: true,
+        collaboration: true,
+        versionHistory: true,
       },
       intelligentCanvas: {
         enabled: true,
         maxBoards: Infinity,
+        maxElementsPerBoard: Infinity,
+        exportFormats: ['png', 'svg', 'pdf', 'json', 'figma'],
+        collaboration: true,
+        templates: true,
       },
       aurionChat: {
         enabled: true,
         maxMessagesPerDay: Infinity,
+        advancedModels: true,
+        contextMemory: true,
+        codeExecution: true,
+        fileAttachments: true,
       },
       agentAI: {
         enabled: true,
         maxRequestsPerMonth: Infinity,
+        advancedModels: true,
+        codeGeneration: true,
+        codeReview: true,
+        fineTuning: true,
+        customInstructions: true,
+        batchProcessing: true,
       },
       appBuilder: {
         enabled: true,
-        features: 'deploy',
+        features: 'enterprise',
+        maxApps: Infinity,
+        customDomains: true,
+        apiIntegrations: true,
+        analytics: true,
+        whiteLabel: true,
       },
       workflow: {
         enabled: true,
         maxWorkflows: Infinity,
+        maxStepsPerWorkflow: Infinity,
+        scheduling: true,
+        webhooks: true,
+        advancedConditions: true,
+        parallelExecution: true,
       },
       monitoring: {
         enabled: true,
+        maxEndpoints: Infinity,
+        alertsEnabled: true,
+        customAlerts: true,
+        apiAccess: true,
+        historicalData: 365,
+      },
+      support: {
+        level: 'dedicated',
+        responseTime: '1h',
+        phone: true,
+        slack: true,
+      },
+      security: {
+        sso: true,
+        saml: true,
+        scim: true,
+        auditLogs: true,
+        ipWhitelist: true,
+        customRoles: true,
+        mfa: true,
+      },
+      integrations: {
+        maxIntegrations: Infinity,
+        premiumIntegrations: true,
+        customWebhooks: true,
+        apiAccess: true,
+        rateLimitPerMinute: 1000,
       },
     },
   },
@@ -299,6 +611,8 @@ const initialUsage: UsageData = {
   agentAIRequestsThisMonth: 0,
   canvasBoardsCount: 0,
   workflowsCount: 0,
+  appsCount: 0,
+  integrationsCount: 0,
   lastDailyReset: new Date().toISOString().split('T')[0],
   lastMonthlyReset: new Date().toISOString().slice(0, 7), // YYYY-MM
 };
