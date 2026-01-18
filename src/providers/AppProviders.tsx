@@ -76,18 +76,27 @@ function CoreProviders({ children }: { children: ReactNode }) {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   const clerkKey = getClerkPublishableKey();
-  const { IS_PRODUCTION } = getEnvConfig();
   const basename = import.meta.env.BASE_URL;
 
-  // Use Clerk authentication with real keys
-  logger.info('Running with Clerk authentication - Real user authentication enabled');
+  // Check if Clerk is configured
+  const hasClerkKey = !!clerkKey;
+
+  if (hasClerkKey) {
+    logger.info('Running with Clerk authentication - Real user authentication enabled');
+  } else {
+    logger.info('Running in demo mode - Authentication disabled');
+  }
 
   return (
     <BrowserRouter basename={basename}>
       <CoreProviders>
-        <ClerkProvider publishableKey={clerkKey} appearance={clerkAppearance}>
-          {children}
-        </ClerkProvider>
+        {hasClerkKey ? (
+          <ClerkProvider publishableKey={clerkKey} appearance={clerkAppearance}>
+            {children}
+          </ClerkProvider>
+        ) : (
+          children
+        )}
       </CoreProviders>
     </BrowserRouter>
   );

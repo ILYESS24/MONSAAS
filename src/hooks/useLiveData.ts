@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAuth } from '@clerk/clerk-react';
 import { logger } from '@/lib/logger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { Database } from '@/types/supabase';
@@ -66,7 +65,8 @@ export const formatRelativeTime = (date: Date): string => {
  * Fetches real data from Supabase
  */
 export function useLiveStats(updateInterval = 30000) {
-  const { userId } = useAuth();
+  // Note: userId filtering removed for demo mode compatibility
+  // In production with Clerk, you would use the userId from useAuth()
   const [stats, setStats] = useState<LiveStats>({
     totalProjects: 0,
     activeUsers: 0,
@@ -97,18 +97,10 @@ export function useLiveStats(updateInterval = 30000) {
       if (projectsError) throw projectsError;
 
       // Fetch active (in_progress) projects count
-      // Filter by user when authenticated, or show global stats
-      let projectQuery = supabase
+      const { count: activeProjectsCount, error: activeError } = await supabase
         .from('projects')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'in_progress');
-
-      // If user is authenticated, filter by user_id
-      if (userId) {
-        projectQuery = projectQuery.eq('user_id', userId);
-      }
-
-      const { count: activeProjectsCount, error: activeError } = await projectQuery;
 
       if (activeError) throw activeError;
 
