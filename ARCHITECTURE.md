@@ -341,3 +341,89 @@ Protected routes use the `ProtectedRoute` component:
 3. **Type Safety**: Full TypeScript coverage
 4. **Error Handling**: Centralized with ErrorBoundary
 5. **Logging**: Structured logging with levels
+
+## Workflow Orchestration System
+
+The application includes a comprehensive workflow automation system in `src/lib/workflow/`.
+
+### Workflow Modules
+
+1. **Types (`types.ts`)**
+   - Complete type definitions for workflows, nodes, edges, executions
+   - Integration types with authentication and rate limiting
+   - Execution context and step tracking types
+
+2. **Integration Registry (`integrations.ts`)**
+   - 20+ native integrations (Salesforce, HubSpot, Stripe, Slack, GitHub, etc.)
+   - OAuth2, API Key, JWT, and Webhook authentication support
+   - Rate limiting and health monitoring
+   - Webhook configuration management
+
+3. **Workflow Engine (`engine.ts`)**
+   - Node executors for all node types (action, condition, loop, delay, transform, notification)
+   - Condition evaluation with multiple operators
+   - Execution context management
+   - Retry logic with exponential backoff
+   - Event emission system
+
+4. **Templates (`templates.ts`)**
+   - Pre-built workflow templates for common automation scenarios
+   - Categories: Sales, Customer Success, Development, Marketing, Operations, Support
+   - Template search and filtering
+
+5. **Store (`store.ts`)**
+   - Workflow state management with React hooks
+   - CRUD operations for workflows, nodes, edges
+   - Execution management
+   - Integration connection management
+
+### Workflow Node Types
+
+| Node Type | Description |
+|-----------|-------------|
+| `trigger` | Start point - manual, schedule, webhook, or integration event |
+| `action` | Execute an integration action |
+| `condition` | Branch based on conditions |
+| `loop` | Iterate over arrays or repeat operations |
+| `delay` | Wait for a specified time |
+| `transform` | Map and transform data |
+| `notification` | Send notifications (email, Slack, webhook) |
+| `subworkflow` | Execute another workflow |
+| `error_handler` | Handle errors gracefully |
+
+### Usage Example
+
+```typescript
+import {
+  useWorkflowStore,
+  useIntegrations,
+  workflowEngine,
+  WORKFLOW_TEMPLATES,
+} from '@/lib/workflow';
+
+// Create a new workflow
+const store = useWorkflowStore();
+const workflow = store.createWorkflow({
+  name: 'Lead Notification',
+  trigger: { type: 'integration', config: { integrationId: 'hubspot' } },
+  nodes: [...],
+  edges: [...],
+  // ...
+});
+
+// Execute workflow
+const execution = await store.executeWorkflow(workflow.id, { leadData });
+
+// Use templates
+const template = WORKFLOW_TEMPLATES.find(t => t.id === 'lead-nurturing');
+store.createWorkflow(template.workflow);
+```
+
+### Workflow Visual Builder
+
+Access the visual workflow builder at `/workflows`:
+- Create and edit workflows with drag-and-drop
+- Connect integrations with OAuth2 flow
+- View execution history and logs
+- Use templates to get started quickly
+
