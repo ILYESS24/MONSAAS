@@ -31,6 +31,7 @@ const AurionChat = () => (
     <IframePage
       title={tool?.name || "Aurion Chat"}
       src={tool?.url || "https://bolt.new"}
+      toolId="aurion-chat"
     />
   </>
 );

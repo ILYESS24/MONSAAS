@@ -31,6 +31,7 @@ const AppBuilder = () => (
     <IframePage
       title={tool?.name || "App Builder"}
       src={tool?.url || "https://bolt.new"}
+      toolId="app-builder"
     />
   </>
 );

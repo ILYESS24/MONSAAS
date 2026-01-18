@@ -31,6 +31,7 @@ const CodeEditor = () => (
     <IframePage
       title={tool?.name || "Code Editor"}
       src={tool?.url || "https://bolt.new"}
+      toolId="code-editor"
     />
   </>
 );

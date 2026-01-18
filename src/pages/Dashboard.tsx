@@ -12,6 +12,8 @@ import {
   useTasksDueToday,
   formatRelativeTime 
 } from "@/hooks/useLiveData";
+import { useSubscription } from "@/hooks/useSubscription";
+import { SUBSCRIPTION_PLANS, formatLimit } from "@/lib/subscription";
 import { SEO, seoConfigs } from "@/components/common/SEO";
 import {
   LayoutDashboard,
@@ -293,6 +295,9 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
   useCurrentTime(); // Keep time updates for live functionality
   const { projects: recentProjects, isLoading: projectsLoading } = useProjects(4);
   const { tasksCount: tasksDueToday, isLoading: tasksLoading } = useTasksDueToday();
+  
+  // Subscription hooks
+  const { currentPlan, getUsageInfo, planInfo } = useSubscription();
 
   // Handlers
   const handleToggleSidebar = useCallback(() => {
@@ -1012,6 +1017,195 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   </motion.div>
                 );
               })}
+            </div>
+          </motion.div>
+
+          {/* My Subscription Section - Usage Tracking */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.1 }}
+            className="mt-8"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold">Mon Abonnement</h2>
+                <p className="text-white/50 text-sm mt-1">Suivez votre consommation en temps réel</p>
+              </div>
+              <Link 
+                to="/pricing"
+                className="text-sm text-[#D4FF00] hover:text-[#E5FF4D] flex items-center gap-1 transition-colors"
+              >
+                Changer de plan
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Current Plan Card */}
+              <div className="bg-gradient-to-b from-[#D4FF00]/10 to-[#1a1a1a] border border-[#D4FF00]/30 rounded-2xl p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-[#D4FF00]/20">
+                    <Crown className="w-5 h-5 text-[#D4FF00]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{planInfo.name}</h3>
+                    <p className="text-xs text-white/40">
+                      {planInfo.price === 0 ? 'Gratuit' : `€${planInfo.price}/mois`}
+                    </p>
+                  </div>
+                </div>
+                
+                {currentPlan !== 'enterprise' && (
+                  <Link
+                    to="/pricing"
+                    className="block w-full text-center py-2 bg-[#D4FF00] text-black rounded-lg text-sm font-medium hover:bg-[#E5FF4D] transition-colors mt-4"
+                  >
+                    Passer au plan supérieur
+                  </Link>
+                )}
+              </div>
+
+              {/* Usage Overview Cards */}
+              <div className="lg:col-span-2 bg-[#1a1a1a] border border-white/10 rounded-2xl p-5">
+                <h3 className="text-sm font-medium text-white/60 mb-4">Consommation</h3>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {/* Chat Messages */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Chat</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.chat.formatted}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          getUsageInfo.chat.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.chat.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: `${Math.min(getUsageInfo.chat.percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Agent AI */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Bot className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Agent AI</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.agentAI.enabled ? getUsageInfo.agentAI.formatted : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          !getUsageInfo.agentAI.enabled ? 'bg-white/20' :
+                          getUsageInfo.agentAI.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.agentAI.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: getUsageInfo.agentAI.enabled ? `${Math.min(getUsageInfo.agentAI.percentage, 100)}%` : '0%' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Canvas Boards */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <PenTool className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Canvas</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.canvas.formatted}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          getUsageInfo.canvas.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.canvas.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: `${Math.min(getUsageInfo.canvas.percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Projects */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <FolderOpen className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Projets</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.projects.formatted}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          getUsageInfo.projects.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.projects.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: `${Math.min(getUsageInfo.projects.percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Storage */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Stockage</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.storage.formatted}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          getUsageInfo.storage.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.storage.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: `${Math.min(getUsageInfo.storage.percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Workflows */}
+                  <div className="bg-white/5 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-[#D4FF00]" />
+                        <span className="text-xs text-white/60">Workflows</span>
+                      </div>
+                      <span className="text-xs text-white/40">
+                        {getUsageInfo.workflows.enabled ? getUsageInfo.workflows.formatted : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          !getUsageInfo.workflows.enabled ? 'bg-white/20' :
+                          getUsageInfo.workflows.percentage >= 80 ? 'bg-red-500' : 
+                          getUsageInfo.workflows.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                        }`}
+                        style={{ width: getUsageInfo.workflows.enabled ? `${Math.min(getUsageInfo.workflows.percentage, 100)}%` : '0%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </main>

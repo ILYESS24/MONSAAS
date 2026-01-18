@@ -27,6 +27,7 @@ const IntelligentCanvas = () => (
     <IframePage
       title="Intelligent Canvas"
       src="https://tersa-main-b5f0ey7pq-launchmateais-projects.vercel.app/canvas/"
+      toolId="intelligent-canvas"
     />
   </>
 );

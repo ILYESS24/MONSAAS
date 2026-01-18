@@ -31,6 +31,7 @@ const TextEditor = () => (
     <IframePage
       title={tool?.name || "Text Editor"}
       src={tool?.url || "https://bolt.new"}
+      toolId="text-editor"
     />
   </>
 );

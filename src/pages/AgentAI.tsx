@@ -31,6 +31,7 @@ const AgentAI = () => (
     <IframePage
       title={tool?.name || "Agent AI"}
       src={tool?.url || "https://bolt.new"}
+      toolId="agent-ai"
     />
   </>
 );
