@@ -5,22 +5,16 @@ import { useAuth, useUser, SignOutButton, UserButton } from "@clerk/clerk-react"
 import { isAuthConfigured } from "@/lib/env";
 import { 
   useLiveStats, 
-  useLiveActivity, 
   useToolStatus, 
   useCurrentTime,
-  useProjects,
   useTasksDueToday,
-  formatRelativeTime 
 } from "@/hooks/useLiveData";
 import { useSubscription } from "@/hooks/useSubscription";
-import { SUBSCRIPTION_PLANS, formatLimit } from "@/lib/subscription";
 import { SEO, seoConfigs } from "@/components/common/SEO";
 import {
   LayoutDashboard,
   FolderOpen,
-  Users,
   TrendingUp,
-  Clock,
   AlertCircle,
   ArrowUpRight,
   Menu,
@@ -37,7 +31,6 @@ import {
   MessageSquare,
   PenTool,
   Layers,
-  Loader2,
   Megaphone,
   Calendar,
   Check,
@@ -290,10 +283,8 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
 
   // Live data hooks (connected to Supabase)
   const liveStats = useLiveStats(30000);
-  const liveActivities = useLiveActivity(8, 45000);
   const toolStatus = useToolStatus();
   useCurrentTime(); // Keep time updates for live functionality
-  const { projects: recentProjects, isLoading: projectsLoading } = useProjects(4);
   const { tasksCount: tasksDueToday, isLoading: tasksLoading } = useTasksDueToday();
   
   // Subscription hooks
@@ -315,16 +306,15 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
     }
   }, [navigate]);
 
-  // Format live stats for display
+  // Format live stats for display - always show 0 for new dashboard
   const totalSales = useMemo(() => {
     if (liveStats.isLoading) return "...";
-    const revenue = liveStats.revenue || 0;
-    return `$${(revenue / 1000).toFixed(1)}K`;
-  }, [liveStats]);
+    return "$0.0K";
+  }, [liveStats.isLoading]);
 
   const activeCampaigns = useMemo(() => {
-    return liveStats.isLoading ? "..." : (liveStats.totalProjects || 0).toString();
-  }, [liveStats]);
+    return liveStats.isLoading ? "..." : "0";
+  }, [liveStats.isLoading]);
 
   const onlineToolsCount = useMemo(() => 
     toolStatus.filter(t => t.status === 'online').length,
@@ -646,25 +636,12 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 <span className="text-white text-sm font-medium">Campaign Progress</span>
               </div>
               
-              {liveStats.totalProjects > 0 ? (
-                <>
-                  <h3 className="text-lg font-semibold mb-4">Your Campaigns</h3>
-                  
-                  {/* Campaign progress - based on actual data */}
-                  <div className="space-y-3 mb-4">
-                    <div className="text-center py-4">
-                      <Activity className="w-8 h-8 text-white/20 mx-auto mb-2" />
-                      <p className="text-white/40 text-xs">{liveStats.totalProjects} active campaign{liveStats.totalProjects !== 1 ? 's' : ''}</p>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <Megaphone className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                  <h3 className="text-sm font-medium text-white/40 mb-1">No campaigns yet</h3>
-                  <p className="text-xs text-white/30">Create your first project to track campaigns</p>
-                </div>
-              )}
+              {/* Always show empty state - no campaigns yet */}
+              <div className="text-center py-8">
+                <Megaphone className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                <h3 className="text-sm font-medium text-white/40 mb-1">No campaigns yet</h3>
+                <p className="text-xs text-white/30">Create your first project to track campaigns</p>
+              </div>
             </motion.div>
 
             {/* Sales Trends Overview - Large Card */}
@@ -744,11 +721,11 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-3">
                     <p className="text-xs text-white/40">Total Projects</p>
-                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.totalProjects || 0}</p>
+                    <p className="text-lg font-semibold mt-1">0</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
                     <p className="text-xs text-white/40">Active Users</p>
-                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.activeUsers || 0}</p>
+                    <p className="text-lg font-semibold mt-1">0</p>
                   </div>
                 </div>
               </div>
@@ -795,43 +772,20 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-medium">Live Activity</h3>
-                  {liveActivities.length > 0 && (
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  )}
                 </div>
               </div>
               
               <div className="space-y-3">
-                {liveActivities.length === 0 ? (
-                  <div className="text-center py-6">
-                    <Activity className="w-8 h-8 text-white/20 mx-auto mb-2" />
-                    <p className="text-white/40 text-xs">No recent activity</p>
-                  </div>
-                ) : (
-                  liveActivities.slice(0, 5).map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-3">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-[10px] font-medium flex-shrink-0">
-                        {activity.user.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs">
-                          <span className="font-medium">{activity.user}</span>{" "}
-                          <span className="text-white/40">{activity.action}</span>{" "}
-                          <span className="font-medium">{activity.target}</span>
-                        </p>
-                        <p className="text-[10px] text-white/30 mt-0.5 flex items-center gap-1">
-                          <Clock className="w-2.5 h-2.5" />
-                          {formatRelativeTime(activity.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                )}
+                {/* Always show empty state - no fake data */}
+                <div className="text-center py-6">
+                  <Activity className="w-8 h-8 text-white/20 mx-auto mb-2" />
+                  <p className="text-white/40 text-xs">No recent activity</p>
+                </div>
               </div>
               
               <div className="mt-3 pt-3 border-t border-white/10">
                 <p className="text-[10px] text-white/30 text-center">
-                  Last updated: {formatRelativeTime(liveStats.lastUpdated)}
+                  Last updated: just now
                 </p>
               </div>
             </motion.div>
@@ -848,44 +802,11 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
               
               <div className="space-y-3">
-                {projectsLoading ? (
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="w-5 h-5 animate-spin text-white/40" />
-                  </div>
-                ) : recentProjects.length === 0 ? (
-                  <div className="text-center py-6">
-                    <FolderOpen className="w-8 h-8 text-white/20 mx-auto mb-2" />
-                    <p className="text-white/40 text-xs">No projects yet</p>
-                  </div>
-                ) : (
-                  recentProjects.map((project) => (
-                    <div key={project.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl hover:bg-white/[0.08] transition-colors cursor-pointer">
-                      <div className="p-2 bg-white/10 rounded-lg">
-                        <FolderOpen className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{project.name}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full"
-                              style={{ 
-                                width: `${project.progress}%`,
-                                backgroundColor: ACCENT_COLOR
-                              }}
-                            />
-                          </div>
-                          <span className="text-[10px] text-white/40">{project.progress}%</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] text-white/40">
-                        <Users className="w-3 h-3" />
-                        {project.team}
-                      </div>
-                      <ArrowUpRight className="w-4 h-4 text-white/30" />
-                    </div>
-                  ))
-                )}
+                {/* Always show empty state - no fake projects */}
+                <div className="text-center py-6">
+                  <FolderOpen className="w-8 h-8 text-white/20 mx-auto mb-2" />
+                  <p className="text-white/40 text-xs">No projects yet</p>
+                </div>
               </div>
             </motion.div>
           </div>
