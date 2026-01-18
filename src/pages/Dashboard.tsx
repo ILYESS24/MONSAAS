@@ -101,38 +101,38 @@ const categoryTabs = ['All', 'Accounting', 'Logistics', 'Engagement'];
 
 // Weekly sales data for bar chart
 const weeklySalesData = [
-  { day: 'Sat', value: 40 },
-  { day: 'Sun', value: 65 },
-  { day: 'Mon', value: 85 },
-  { day: 'Tue', value: 50 },
-  { day: 'Wed', value: 70 },
-  { day: 'Thu', value: 90 },
-  { day: 'Fri', value: 100 },
+  { day: 'Sat', value: 0 },
+  { day: 'Sun', value: 0 },
+  { day: 'Mon', value: 0 },
+  { day: 'Tue', value: 0 },
+  { day: 'Wed', value: 0 },
+  { day: 'Thu', value: 0 },
+  { day: 'Fri', value: 0 },
 ];
 
 // Weekly engagement donut data
 const engagementData = [
-  { name: 'Mobile App', value: 30, color: ACCENT_COLOR },
-  { name: 'Website', value: 70, color: '#22C55E' },
+  { name: 'Mobile App', value: 0, color: ACCENT_COLOR },
+  { name: 'Website', value: 0, color: '#22C55E' },
 ];
 
 // Active campaigns line chart data
 const campaignData = [
-  { day: 'Day 1', value: 200 },
-  { day: 'Day 2', value: 350 },
-  { day: 'Day 3', value: 280 },
-  { day: 'Day 4', value: 450 },
-  { day: 'Day 5', value: 580 },
+  { day: 'Day 1', value: 0 },
+  { day: 'Day 2', value: 0 },
+  { day: 'Day 3', value: 0 },
+  { day: 'Day 4', value: 0 },
+  { day: 'Day 5', value: 0 },
 ];
 
 // Sales trends area chart data
 const salesTrendsData = [
-  { month: 'Jan', value: 2800 },
-  { month: 'Feb', value: 3200 },
-  { month: 'Mar', value: 2900 },
-  { month: 'Apr', value: 4100 },
-  { month: 'May', value: 3800 },
-  { month: 'Jun', value: 5230 },
+  { month: 'Jan', value: 0 },
+  { month: 'Feb', value: 0 },
+  { month: 'Mar', value: 0 },
+  { month: 'Apr', value: 0 },
+  { month: 'May', value: 0 },
+  { month: 'Jun', value: 0 },
 ];
 
 // Tool Status Card Component
@@ -254,12 +254,12 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
   // Format live stats for display
   const totalSales = useMemo(() => {
     if (liveStats.isLoading) return "...";
-    const revenue = liveStats.revenue || 23000;
+    const revenue = liveStats.revenue || 0;
     return `$${(revenue / 1000).toFixed(1)}K`;
   }, [liveStats]);
 
   const activeCampaigns = useMemo(() => {
-    return liveStats.isLoading ? "..." : (liveStats.totalProjects || 24).toString();
+    return liveStats.isLoading ? "..." : (liveStats.totalProjects || 0).toString();
   }, [liveStats]);
 
   const onlineToolsCount = useMemo(() => 
@@ -565,7 +565,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               <div className="flex items-center justify-between mb-4">
                 <span className="text-white text-sm font-medium">Weekly Engagement</span>
                 <div className="flex items-center gap-1 text-white/60">
-                  <span className="text-xs">70</span>
+                  <span className="text-xs">0</span>
                 </div>
               </div>
               
@@ -590,7 +590,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs text-white/60">30</span>
+                    <span className="text-xs text-white/60">0</span>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -665,7 +665,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-white/40">26 sep</span>
                 <div className="text-right">
-                  <span className="text-2xl font-bold">580</span>
+                  <span className="text-2xl font-bold">0</span>
                   <span className="text-xs text-white/40 ml-1">person</span>
                 </div>
               </div>
@@ -716,17 +716,17 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 
                 {/* Value Indicator */}
                 <div className="absolute top-0 left-1/4 bg-[#D4FF00] text-black text-xs px-2 py-1 rounded font-medium">
-                  $ 5,230
+                  $ 0
                 </div>
               </div>
 
               {/* Big Stats */}
               <div className="mt-6 flex items-end justify-between">
                 <div>
-                  <p className="text-5xl font-bold">$34.2K</p>
+                  <p className="text-5xl font-bold">$0.0K</p>
                   <p className="text-green-400 text-sm mt-1 flex items-center gap-1">
                     <TrendingUp className="w-4 h-4" />
-                    80% Growth
+                    0% Growth
                   </p>
                 </div>
               </div>
@@ -762,11 +762,11 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-3">
                     <p className="text-xs text-white/40">360 CC Camera</p>
-                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.totalProjects || 12}</p>
+                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.totalProjects || 0}</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
                     <p className="text-xs text-white/40">Airpods 2nd Gen</p>
-                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.activeUsers || 45}</p>
+                    <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.activeUsers || 0}</p>
                   </div>
                 </div>
               </div>
