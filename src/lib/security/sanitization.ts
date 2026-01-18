@@ -55,9 +55,22 @@ export function escapeHtml(input: string): string {
 
 /**
  * Strip all HTML tags from a string
+ * Uses iterative replacement to handle nested/malformed tags
  */
 export function stripHtml(input: string): string {
-  return input.replace(/<[^>]*>/g, '');
+  let result = input;
+  let previousResult = '';
+  
+  // Iterate until no more tags are found (handles nested tags)
+  while (result !== previousResult) {
+    previousResult = result;
+    result = result.replace(/<[^>]*>/g, '');
+  }
+  
+  // Also handle unclosed tags
+  result = result.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
+  return result;
 }
 
 /**
@@ -75,7 +88,11 @@ export function sanitizeHtml(
     const openTag = new RegExp(`&lt;(${tag})(&gt;|\\s[^&]*&gt;)`, 'gi');
     const closeTag = new RegExp(`&lt;\\/${tag}&gt;`, 'gi');
 
-    result = result.replace(openTag, '<$1$2'.replace('&gt;', '>'));
+    // Use replacement function to properly handle captured groups
+    result = result.replace(openTag, (_match, tagName, rest) => {
+      const unescapedRest = rest.replace(/&gt;/g, '>');
+      return `<${tagName}${unescapedRest}`;
+    });
     result = result.replace(closeTag, `</${tag}>`);
   }
 
@@ -88,8 +105,9 @@ export function sanitizeHtml(
 
 /**
  * Characters that are dangerous in SQL contexts
+ * Note: Semicolons are handled separately to avoid breaking legitimate queries
  */
-const SQL_DANGEROUS_CHARS = /['";\\-]/g;
+const SQL_DANGEROUS_CHARS = /['"\\\-]/g;
 
 /**
  * Common SQL injection patterns
@@ -99,13 +117,14 @@ const SQL_INJECTION_PATTERNS = [
   /--/,
   /\/\*/,
   /\*\//,
-  /;/,
+  /;\s*(union|select|insert|update|delete|drop|truncate|exec|execute)/i, // Dangerous semicolon patterns
   /xp_/i,
   /0x[0-9a-fA-F]+/,
 ];
 
 /**
  * Escape special characters for SQL
+ * Note: Always use parameterized queries when possible
  */
 export function escapeSql(input: string): string {
   return input.replace(SQL_DANGEROUS_CHARS, (char) => {
@@ -118,8 +137,6 @@ export function escapeSql(input: string): string {
         return '\\\\';
       case '-':
         return '\\-';
-      case ';':
-        return '';
       default:
         return char;
     }

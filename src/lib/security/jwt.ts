@@ -460,15 +460,18 @@ export class TokenManager {
 export class SecureTokenStorage {
   private encryptionKey: CryptoKey | null = null;
   private storageKey: string;
+  private storedSalt: Uint8Array | null = null;
 
   constructor(storageKey: string = 'secure_tokens') {
     this.storageKey = storageKey;
   }
 
   /**
-   * Initialize encryption key
+   * Initialize encryption key with user-specific salt
+   * @param password - User password or device identifier
+   * @param userIdentifier - Optional user-specific identifier for salt derivation
    */
-  async initialize(password: string): Promise<void> {
+  async initialize(password: string, userIdentifier?: string): Promise<void> {
     const encoder = new TextEncoder();
     const passwordBuffer = encoder.encode(password);
 
@@ -481,7 +484,8 @@ export class SecureTokenStorage {
       ['deriveKey']
     );
 
-    const salt = encoder.encode('aurion-studio-secure-storage');
+    // Generate or retrieve user-specific salt
+    const salt = await this.getSalt(userIdentifier);
 
     this.encryptionKey = await crypto.subtle.deriveKey(
       {
@@ -495,6 +499,43 @@ export class SecureTokenStorage {
       false,
       ['encrypt', 'decrypt']
     );
+  }
+
+  /**
+   * Get or generate user-specific salt
+   */
+  private async getSalt(userIdentifier?: string): Promise<Uint8Array> {
+    const saltKey = `${this.storageKey}:salt`;
+    
+    // Try to retrieve existing salt
+    const existingSalt = sessionStorage.getItem(saltKey);
+    if (existingSalt) {
+      try {
+        const parsed = JSON.parse(existingSalt);
+        return new Uint8Array(parsed);
+      } catch {
+        // Salt corrupted, generate new one
+      }
+    }
+
+    // Generate new salt (16 bytes)
+    let salt: Uint8Array;
+    if (userIdentifier) {
+      // Derive salt from user identifier for consistency across sessions
+      const encoder = new TextEncoder();
+      const identifierData = encoder.encode(userIdentifier + '-aurion-studio');
+      const hashBuffer = await crypto.subtle.digest('SHA-256', identifierData);
+      salt = new Uint8Array(hashBuffer.slice(0, 16));
+    } else {
+      // Random salt for anonymous sessions
+      salt = crypto.getRandomValues(new Uint8Array(16));
+    }
+
+    // Store salt
+    sessionStorage.setItem(saltKey, JSON.stringify(Array.from(salt)));
+    this.storedSalt = salt;
+
+    return salt;
   }
 
   /**

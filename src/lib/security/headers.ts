@@ -45,9 +45,16 @@ export interface SecurityHeadersReport {
 
 /**
  * Recommended security headers for SaaS applications
+ * 
+ * Note: 'unsafe-inline' is used for script-src and style-src to support
+ * Clerk's authentication UI and Tailwind's inline styles. For stricter CSP,
+ * consider using nonces or hashes, but this requires server-side support.
+ * See: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  */
 export const RECOMMENDED_HEADERS: SecurityHeaderConfig = {
   // Content Security Policy
+  // Note: 'unsafe-inline' for scripts is required by Clerk and some React patterns
+  // For production with stricter requirements, implement nonce-based CSP
   contentSecurityPolicy: [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://clerk.io https://*.clerk.accounts.dev",

@@ -4,8 +4,16 @@
  * Provides Cross-Site Request Forgery protection with token generation
  * and validation for client-side applications.
  * 
+ * This module has two parts:
+ * 1. Core CSRF protection (no dependencies) - CsrfProtection class
+ * 2. React integration - useCsrf hook (requires React)
+ * 
  * @module security/csrf
  */
+
+// React imports for the useCsrf hook
+// These are tree-shaken if the hook is not used
+import { useState, useCallback, useMemo } from 'react';
 
 // =============================================================================
 // TYPES
@@ -228,8 +236,6 @@ export function createCsrfFetch(
  * }
  * ```
  */
-import { useState, useCallback, useMemo } from 'react';
-
 export function useCsrf(config?: CsrfConfig) {
   const csrf = useMemo(() => new CsrfProtection(config), [config]);
   const [token, setToken] = useState(() => csrf.getToken());
