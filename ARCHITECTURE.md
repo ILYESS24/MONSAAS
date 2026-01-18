@@ -219,11 +219,107 @@ Component Re-render
 
 ## Security Architecture
 
-1. **Authentication**: Clerk-based with protected routes
-2. **API Security**: Token-based, validated on server
-3. **XSS Protection**: Content Security Policy headers
-4. **CSRF Protection**: SameSite cookies
-5. **Iframe Security**: Sandbox attributes, origin validation
+The application implements a comprehensive multi-layer security system in `src/lib/security/`.
+
+### Security Modules
+
+1. **Encryption (`encryption.ts`)**
+   - AES-256-GCM encryption for sensitive data
+   - PBKDF2 key derivation from passwords
+   - Field-level encryption for database columns
+   - Constant-time comparison to prevent timing attacks
+
+2. **Input Sanitization (`sanitization.ts`)**
+   - XSS prevention with HTML escaping
+   - SQL injection detection and prevention
+   - NoSQL injection protection
+   - Path traversal attack prevention
+   - Command injection blocking
+   - URL sanitization
+
+3. **Rate Limiting (`rateLimit.ts`)**
+   - Sliding window rate limiter
+   - Pre-configured limiters for login, API, signup
+   - Automatic blocking after limit exceeded
+   - Higher-order function wrapper for easy integration
+
+4. **CSRF Protection (`csrf.ts`)**
+   - Token generation and validation
+   - Automatic token rotation
+   - React hook (`useCsrf`) for form integration
+   - Fetch wrapper for automatic header injection
+
+5. **Multi-Factor Authentication (`mfa.ts`)**
+   - TOTP (Time-based One-Time Password) compatible with Google Authenticator
+   - Backup codes generation and validation
+   - Device fingerprinting for trusted devices
+   - Session management with MFA state tracking
+
+6. **JWT Security (`jwt.ts`)**
+   - Token parsing and validation
+   - Automatic token refresh
+   - Refresh token rotation with family tracking
+   - Replay attack detection
+   - Secure token storage
+
+7. **Security Audit (`audit.ts`)**
+   - Comprehensive event logging
+   - Automatic suspicious pattern detection
+   - RGPD/SOC2 compliance support
+   - Export to JSON/CSV for reporting
+
+8. **Security Headers (`headers.ts`)**
+   - Content Security Policy (CSP) builder
+   - Header validation and scoring
+   - Security grade calculation
+   - Recommended headers configuration
+
+### Usage Example
+
+```typescript
+import {
+  sanitizeInput,
+  loginRateLimiter,
+  useCsrf,
+  totpManager,
+  auditLogger,
+} from '@/lib/security';
+
+// Sanitize user input
+const cleanInput = sanitizeInput(userInput, { allowHtml: false });
+
+// Check rate limit before login
+const result = loginRateLimiter.check(userEmail);
+if (!result.allowed) {
+  throw new Error('Too many login attempts');
+}
+
+// Generate TOTP for MFA
+const secret = totpManager.generateSecret('user@example.com');
+
+// Log security event
+auditLogger.log({
+  type: 'AUTH_LOGIN_SUCCESS',
+  userId: user.id,
+  outcome: 'success',
+});
+```
+
+### Authentication Flow
+
+1. **Primary Auth**: Clerk-based authentication
+2. **MFA Verification**: TOTP or backup codes
+3. **Session Management**: JWT with refresh token rotation
+4. **Device Tracking**: Fingerprinting for trusted devices
+
+### Protected Routes
+
+Protected routes use the `ProtectedRoute` component:
+```typescript
+<Route element={<ProtectedRoute />}>
+  <Route path="/dashboard" element={<Dashboard />} />
+</Route>
+```
 
 ## Performance Optimizations
 
