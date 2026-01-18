@@ -17,10 +17,6 @@ import {
   LayoutDashboard,
   FolderOpen,
   Users,
-  BarChart3,
-  Bell,
-  Search,
-  ChevronRight,
   TrendingUp,
   Clock,
   AlertCircle,
@@ -40,10 +36,7 @@ import {
   PenTool,
   Layers,
   Loader2,
-  Package,
   Megaphone,
-  UserCircle,
-  ChevronDown,
   Calendar,
 } from "lucide-react";
 import {
@@ -51,8 +44,6 @@ import {
   Area,
   BarChart,
   Bar,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
@@ -88,17 +79,10 @@ const TOOL_ROUTES: Record<string, string> = {
 // Lime/Yellow-Green accent color from reference
 const ACCENT_COLOR = "#D4FF00";
 
-// Navigation tabs (matching reference image)
+// Navigation tabs - only Overview is functional, others are placeholder for future features
 const navTabs = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard, active: true },
-  { id: 'inventory', label: 'Inventory', icon: Package },
-  { id: 'marketing', label: 'Marketing', icon: Megaphone },
-  { id: 'insights', label: 'Customer Insights', icon: UserCircle },
-  { id: 'reports', label: 'Analytics Reports', icon: BarChart3 },
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard, route: '/dashboard' },
 ];
-
-// Category tabs
-const categoryTabs = ['All', 'Accounting', 'Logistics', 'Engagement'];
 
 // Weekly sales data for bar chart
 const weeklySalesData = [
@@ -115,15 +99,6 @@ const weeklySalesData = [
 const engagementData = [
   { name: 'Mobile App', value: 0, color: ACCENT_COLOR },
   { name: 'Website', value: 0, color: '#22C55E' },
-];
-
-// Active campaigns line chart data
-const campaignData = [
-  { day: 'Day 1', value: 0 },
-  { day: 'Day 2', value: 0 },
-  { day: 'Day 3', value: 0 },
-  { day: 'Day 4', value: 0 },
-  { day: 'Day 5', value: 0 },
 ];
 
 // Sales trends area chart data
@@ -225,8 +200,6 @@ interface DashboardContentProps {
 const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentProps) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [activeCategory, setActiveCategory] = useState('All');
 
   // Live data hooks (connected to Supabase)
   const liveStats = useLiveStats(30000);
@@ -397,51 +370,19 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
             {/* Navigation Tabs */}
             <nav className="hidden md:flex items-center gap-1">
               {navTabs.map((tab) => (
-                <button
+                <Link
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all ${
-                    tab.active || activeTab === tab.id
-                      ? 'bg-[#D4FF00] text-black font-medium'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
-                  }`}
+                  to={tab.route}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all bg-[#D4FF00] text-black font-medium"
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
-                </button>
+                </Link>
               ))}
             </nav>
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
-              {/* Filter Tags */}
-              <div className="hidden lg:flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full text-xs">
-                  Weekly
-                  <X className="w-3 h-3 cursor-pointer hover:text-[#D4FF00]" />
-                </span>
-                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full text-xs">
-                  Last 1 hour
-                  <X className="w-3 h-3 cursor-pointer hover:text-[#D4FF00]" />
-                </span>
-              </div>
-              
-              {/* Search */}
-              <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors">
-                <Search className="w-5 h-5" />
-              </button>
-              
-              {/* Notifications */}
-              <button className="relative p-2.5 hover:bg-white/10 rounded-full transition-colors">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
-              </button>
-
-              {/* More Options */}
-              <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors bg-white/5">
-                <Menu className="w-5 h-5" />
-              </button>
-
               {/* User Avatar */}
               <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/20">
                 {authEnabled ? (
@@ -464,23 +405,6 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
 
         {/* Main Dashboard Content */}
         <main className="p-4 md:p-6">
-          {/* Category Tabs */}
-          <div className="flex items-center gap-4 mb-6">
-            {categoryTabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveCategory(tab)}
-                className={`text-sm transition-colors ${
-                  activeCategory === tab
-                    ? 'text-white font-medium border-b-2 border-[#D4FF00] pb-1'
-                    : 'text-white/40 hover:text-white/60'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
           {/* Main Dashboard Grid */}
           <div className="grid grid-cols-12 gap-4">
             {/* Total Sales Card */}
@@ -621,7 +545,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
             </motion.div>
 
-            {/* Active Campaigns Chart Card */}
+            {/* Campaign Summary Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -629,50 +553,28 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               className="col-span-12 lg:col-span-3 bg-[#1a1a1a] border border-white/10 rounded-2xl p-5"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white text-sm font-medium">Active Campaigns</span>
-                <ChevronDown className="w-4 h-4 text-white/40" />
+                <span className="text-white text-sm font-medium">Campaign Progress</span>
               </div>
               
-              <h3 className="text-lg font-semibold mb-4">Gadget Galaxy</h3>
-              
-              {/* Campaign Days */}
-              <div className="space-y-1 mb-4">
-                {['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'].map((day, index) => (
-                  <div key={day} className="flex items-center justify-between text-xs">
-                    <span className="text-white/40 w-12">{day}</span>
-                    <div className="flex-1 h-1 mx-2 bg-white/10 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-white/40 rounded-full"
-                        style={{ width: `${(index + 1) * 20}%` }}
-                      />
+              {liveStats.totalProjects > 0 ? (
+                <>
+                  <h3 className="text-lg font-semibold mb-4">Your Campaigns</h3>
+                  
+                  {/* Campaign progress - based on actual data */}
+                  <div className="space-y-3 mb-4">
+                    <div className="text-center py-4">
+                      <Activity className="w-8 h-8 text-white/20 mx-auto mb-2" />
+                      <p className="text-white/40 text-xs">{liveStats.totalProjects} active campaign{liveStats.totalProjects !== 1 ? 's' : ''}</p>
                     </div>
                   </div>
-                ))}
-              </div>
-              
-              {/* Line Chart */}
-              <div className="h-20">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={campaignData}>
-                    <Line 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke={ACCENT_COLOR}
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              
-              {/* Stats */}
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-xs text-white/40">26 sep</span>
-                <div className="text-right">
-                  <span className="text-2xl font-bold">0</span>
-                  <span className="text-xs text-white/40 ml-1">person</span>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <Megaphone className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <h3 className="text-sm font-medium text-white/40 mb-1">No campaigns yet</h3>
+                  <p className="text-xs text-white/30">Create your first project to track campaigns</p>
                 </div>
-              </div>
+              )}
             </motion.div>
 
             {/* Sales Trends Overview - Large Card */}
@@ -743,33 +645,19 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               transition={{ duration: 0.5, delay: 0.5 }}
               className="col-span-12 lg:col-span-6 space-y-4"
             >
-              {/* Summer Steals */}
+              {/* Quick Stats - based on actual data */}
               <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium">Summer Steals</h3>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
-                </div>
-                
-                {/* Product list would go here - simplified */}
-                <div className="text-white/40 text-sm">
-                  Trending products and deals...
-                </div>
-              </div>
-
-              {/* Product Performance */}
-              <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium">Product Performance</h3>
-                  <ArrowUpRight className="w-4 h-4 text-white/40" />
+                  <h3 className="text-sm font-medium">Quick Stats</h3>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-xs text-white/40">360 CC Camera</p>
+                    <p className="text-xs text-white/40">Total Projects</p>
                     <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.totalProjects || 0}</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-xs text-white/40">Airpods 2nd Gen</p>
+                    <p className="text-xs text-white/40">Active Users</p>
                     <p className="text-lg font-semibold mt-1">{liveStats.isLoading ? '...' : liveStats.activeUsers || 0}</p>
                   </div>
                 </div>
@@ -821,7 +709,6 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                   )}
                 </div>
-                <span className="text-xs text-white/40">See all</span>
               </div>
               
               <div className="space-y-3">
@@ -868,10 +755,6 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium">Recent Projects</h3>
-                <button className="flex items-center gap-1 text-xs text-white/40 hover:text-white transition-colors">
-                  View all
-                  <ChevronRight className="w-3 h-3" />
-                </button>
               </div>
               
               <div className="space-y-3">
