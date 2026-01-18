@@ -60,6 +60,7 @@ import {
   type NodeType,
   type WorkflowTemplate,
 } from '@/lib/workflow';
+import { SEO, seoConfigs } from '@/components/common/SEO';
 
 // ==================== NODE ICONS ====================
 

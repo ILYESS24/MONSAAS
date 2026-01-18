@@ -69,6 +69,7 @@ import {
   Legend,
 } from "recharts";
 import { getAllMonitoredEndpoints, type ToolConfig } from "@/config/tools";
+import { SEO, seoConfigs } from "@/components/common/SEO";
 
 // ============================================================================
 // Types & Interfaces
@@ -1077,7 +1078,9 @@ export default function MonitoringDashboard() {
   const unacknowledgedAlerts = state.alerts.filter(a => !a.acknowledged).length;
   
   return (
-    <div className="min-h-screen bg-[#0d0d0d] text-white">
+    <>
+      <SEO {...seoConfigs.monitoring} />
+      <div className="min-h-screen bg-[#0d0d0d] text-white">
       {/* Header */}
       <header className="border-b border-white/10 sticky top-0 z-40 bg-[#0d0d0d]/95 backdrop-blur-sm">
         <div className="px-6 py-4 flex items-center justify-between">
@@ -1315,5 +1318,6 @@ export default function MonitoringDashboard() {
         )}
       </AnimatePresence>
     </div>
+    </>
   );
 }

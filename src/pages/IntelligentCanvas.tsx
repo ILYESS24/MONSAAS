@@ -5,12 +5,30 @@
  */
 
 import { IframePage } from "@/components/common";
+import { SEO } from "@/components/common/SEO";
 
 const IntelligentCanvas = () => (
-  <IframePage
-    title="Intelligent Canvas"
-    src="https://tersa-main-b5f0ey7pq-launchmateais-projects.vercel.app/canvas/"
-  />
+  <>
+    <SEO
+      title="Intelligent Canvas - Tableau Blanc IA"
+      description="Tableau blanc intelligent avec IA intégrée. Brainstorming, mind mapping, diagrammes automatiques. Collaboration en temps réel avec votre équipe."
+      keywords={[
+        'canvas intelligent',
+        'tableau blanc IA',
+        'brainstorming',
+        'mind mapping',
+        'diagrammes',
+        'collaboration visuelle',
+        'whiteboard en ligne',
+        'design thinking',
+      ]}
+      ogType="website"
+    />
+    <IframePage
+      title="Intelligent Canvas"
+      src="https://tersa-main-b5f0ey7pq-launchmateais-projects.vercel.app/canvas/"
+    />
+  </>
 );
 
 export default IntelligentCanvas;
