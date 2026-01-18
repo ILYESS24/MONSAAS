@@ -74,24 +74,24 @@ export const useAppStore = create<AppState>()(
       (set) => ({
         // Theme
         theme: 'dark',
-        setTheme: (theme) => set({ theme }),
+        setTheme: (theme: 'light' | 'dark' | 'system') => set({ theme }),
         
         // Sidebar
         sidebarOpen: true,
-        toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-        setSidebarOpen: (open) => set({ sidebarOpen: open }),
+        toggleSidebar: () => set((state: AppState) => ({ sidebarOpen: !state.sidebarOpen })),
+        setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
         
         // Loading
         isLoading: false,
-        setLoading: (loading) => set({ isLoading: loading }),
+        setLoading: (loading: boolean) => set({ isLoading: loading }),
         
         // Active tab
         activeTab: 'overview',
-        setActiveTab: (tab) => set({ activeTab: tab }),
+        setActiveTab: (tab: string) => set({ activeTab: tab }),
       }),
       {
         name: 'aurion-app-storage',
-        partialize: (state) => ({ theme: state.theme, sidebarOpen: state.sidebarOpen }),
+        partialize: (state: AppState) => ({ theme: state.theme, sidebarOpen: state.sidebarOpen }),
       }
     ),
     { name: 'AppStore' }
@@ -114,7 +114,7 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
       clearUser: () => set({ user: null, isAuthenticated: false }),
     }),
     { name: 'UserStore' }
@@ -161,13 +161,13 @@ export const useDashboardStore = create<DashboardState>()(
       isRefreshing: false,
       lastUpdated: null,
       
-      setStats: (stats) => set({ stats, lastUpdated: new Date() }),
-      setTools: (tools) => set({ tools }),
-      setProjects: (projects) => set({ projects }),
-      setRefreshing: (refreshing) => set({ isRefreshing: refreshing }),
-      updateToolStatus: (toolId, status) =>
-        set((state) => ({
-          tools: state.tools.map((tool) =>
+      setStats: (stats: DashboardStats) => set({ stats, lastUpdated: new Date() }),
+      setTools: (tools: Tool[]) => set({ tools }),
+      setProjects: (projects: Project[]) => set({ projects }),
+      setRefreshing: (refreshing: boolean) => set({ isRefreshing: refreshing }),
+      updateToolStatus: (toolId: string, status: Tool['status']) =>
+        set((state: DashboardState) => ({
+          tools: state.tools.map((tool: Tool) =>
             tool.id === toolId ? { ...tool, status, lastChecked: new Date() } : tool
           ),
         })),
@@ -195,11 +195,11 @@ interface NotificationState {
 export const useNotificationStore = create<NotificationState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, _get) => ({
         notifications: [],
         unreadCount: 0,
         
-        addNotification: (notification) => {
+        addNotification: (notification: Omit<Notification, 'id' | 'read' | 'createdAt'>) => {
           const newNotification: Notification = {
             ...notification,
             id: typeof crypto !== 'undefined' && crypto.randomUUID 
@@ -208,18 +208,18 @@ export const useNotificationStore = create<NotificationState>()(
             read: false,
             createdAt: new Date(),
           };
-          set((state) => ({
+          set((state: NotificationState) => ({
             notifications: [newNotification, ...state.notifications],
             unreadCount: state.unreadCount + 1,
           }));
         },
         
-        markAsRead: (id) =>
-          set((state) => {
-            const notification = state.notifications.find((n) => n.id === id);
+        markAsRead: (id: string) =>
+          set((state: NotificationState) => {
+            const notification = state.notifications.find((n: Notification) => n.id === id);
             if (notification && !notification.read) {
               return {
-                notifications: state.notifications.map((n) =>
+                notifications: state.notifications.map((n: Notification) =>
                   n.id === id ? { ...n, read: true } : n
                 ),
                 unreadCount: Math.max(0, state.unreadCount - 1),
@@ -229,16 +229,16 @@ export const useNotificationStore = create<NotificationState>()(
           }),
         
         markAllAsRead: () =>
-          set((state) => ({
-            notifications: state.notifications.map((n) => ({ ...n, read: true })),
+          set((state: NotificationState) => ({
+            notifications: state.notifications.map((n: Notification) => ({ ...n, read: true })),
             unreadCount: 0,
           })),
         
-        removeNotification: (id) =>
-          set((state) => {
-            const notification = state.notifications.find((n) => n.id === id);
+        removeNotification: (id: string) =>
+          set((state: NotificationState) => {
+            const notification = state.notifications.find((n: Notification) => n.id === id);
             return {
-              notifications: state.notifications.filter((n) => n.id !== id),
+              notifications: state.notifications.filter((n: Notification) => n.id !== id),
               unreadCount: notification && !notification.read
                 ? Math.max(0, state.unreadCount - 1)
                 : state.unreadCount,

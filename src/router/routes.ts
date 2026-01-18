@@ -20,6 +20,7 @@ const Terms = lazy(() => import('@/pages/Terms'));
 const Cookies = lazy(() => import('@/pages/Cookies'));
 const Legal = lazy(() => import('@/pages/Legal'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const MonitoringDashboard = lazy(() => import('@/pages/MonitoringDashboard'));
 const About = lazy(() => import('@/pages/About'));
 const Blog = lazy(() => import('@/pages/Blog'));
 const Contact = lazy(() => import('@/pages/Contact'));
@@ -153,6 +154,13 @@ export const protectedRoutes: RouteConfig[] = [
     protected: true,
     layout: LAYOUT_TYPES.DASHBOARD,
     meta: { title: 'Dashboard - Aurion Studio' },
+  },
+  {
+    path: ROUTES.MONITORING,
+    component: MonitoringDashboard,
+    protected: true,
+    layout: LAYOUT_TYPES.NONE,
+    meta: { title: 'Monitoring Dashboard - Aurion Studio' },
   },
   {
     path: ROUTES.CODE_EDITOR,

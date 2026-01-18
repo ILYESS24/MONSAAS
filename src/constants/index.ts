@@ -25,6 +25,7 @@ export const ROUTES = {
   
   // Protected routes
   DASHBOARD: '/dashboard',
+  MONITORING: '/monitoring',
   CODE_EDITOR: '/code-editor',
   INTELLIGENT_CANVAS: '/intelligent-canvas',
   APP_BUILDER: '/app-builder',
