@@ -12,6 +12,7 @@ import {
   isToolAccessible as checkToolAccessible,
   getToolLimits as getToolLimitsHelper,
   formatLimit,
+  formatStorage,
   type SubscriptionPlanId,
 } from '@/lib/subscription';
 
@@ -137,7 +138,7 @@ export function useSubscription() {
     storage: {
       current: store.usage.storageUsedMB,
       max: limits.maxStorageMB,
-      formatted: `${formatLimit(store.usage.storageUsedMB)}/${formatLimit(limits.maxStorageMB)}`,
+      formatted: `${formatStorage(store.usage.storageUsedMB)}/${formatStorage(limits.maxStorageMB)}`,
       percentage: store.getUsagePercentage('storage'),
     },
   }), [store.usage, limits, store.getUsagePercentage]);

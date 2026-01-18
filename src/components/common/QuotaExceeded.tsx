@@ -143,9 +143,14 @@ export const QuotaExceeded: React.FC<QuotaExceededProps> = ({
           <div className="bg-gradient-to-r from-[#D4FF00]/10 to-green-500/10 border border-[#D4FF00]/30 rounded-xl p-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-white/70">Nouvelle limite</span>
-              <span className="text-lg font-bold text-[#D4FF00]">
-                {getUpgradedLimit()} {typeof getUpgradedLimit() === 'number' ? quotaLabels[quotaType] : ''}
-              </span>
+              {(() => {
+                const upgradedLimit = getUpgradedLimit();
+                return (
+                  <span className="text-lg font-bold text-[#D4FF00]">
+                    {upgradedLimit} {typeof upgradedLimit === 'number' ? quotaLabels[quotaType] : ''}
+                  </span>
+                );
+              })()}
             </div>
           </div>
         </div>

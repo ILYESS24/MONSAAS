@@ -627,11 +627,23 @@ export function getToolLimits(toolId: string, planId: SubscriptionPlanId) {
 
 /**
  * Format limit value for display
+ * @param value - The numeric limit value
+ * @param isStorage - Whether this is a storage value (in MB)
  */
-export function formatLimit(value: number): string {
+export function formatLimit(value: number, isStorage: boolean = false): string {
   if (value === Infinity) return 'Illimité';
-  if (value >= 1024) return `${(value / 1024).toFixed(1)} Go`;
+  if (isStorage && value >= 1024) return `${(value / 1024).toFixed(1)} Go`;
+  if (isStorage) return `${value} Mo`;
   return value.toString();
+}
+
+/**
+ * Format storage value for display
+ */
+export function formatStorage(mb: number): string {
+  if (mb === Infinity) return 'Illimité';
+  if (mb >= 1024) return `${(mb / 1024).toFixed(1)} Go`;
+  return `${mb} Mo`;
 }
 
 export default {
@@ -640,4 +652,5 @@ export default {
   isToolAccessible,
   getToolLimits,
   formatLimit,
+  formatStorage,
 };
