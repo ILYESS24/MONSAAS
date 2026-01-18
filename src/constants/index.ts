@@ -3,7 +3,11 @@
  * 
  * Static values that don't change based on environment.
  * For environment-specific configuration, use src/config/index.ts
+ * For tool configurations, use src/config/tools.ts
  */
+
+// Re-export tool configurations from centralized location
+export { TOOL_URLS, TOOLS, getToolById, getToolUrl } from '@/config/tools';
 
 /**
  * Route paths - centralized routing constants
@@ -36,7 +40,8 @@ export const ROUTES = {
 } as const;
 
 /**
- * External tool URLs
+ * External tool URLs (legacy - use TOOL_URLS from @/config/tools instead)
+ * @deprecated Use TOOL_URLS from @/config/tools.ts
  */
 export const EXTERNAL_TOOLS = {
   CODE_EDITOR: {

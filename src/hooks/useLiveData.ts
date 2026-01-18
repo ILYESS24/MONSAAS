@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { TOOLS as TOOL_CONFIGS } from '@/config/tools';
 import type { Database } from '@/types/supabase';
 
 // Types for live data
@@ -38,14 +39,12 @@ export interface ToolStatus {
   url: string;
 }
 
-// Tool configuration - removed problematic Vercel service
-const TOOLS: Omit<ToolStatus, 'status' | 'lastPing'>[] = [
-  { id: 'code-editor', name: 'Code Editor', url: 'https://eed972db.aurion-ide.pages.dev' },
-  { id: 'app-builder', name: 'App Builder', url: 'https://production.ai-assistant-xlv.pages.dev' },
-  { id: 'agent-ai', name: 'Agent AI', url: 'https://flo-9xh2.onrender.com/' },
-  { id: 'aurion-chat', name: 'Aurion Chat', url: 'https://canvchat-1-y73q.onrender.com/' },
-  { id: 'text-editor', name: 'Text Editor', url: 'https://4e2af144.aieditor.pages.dev' },
-];
+// Tool configuration - centralized in src/config/tools.ts
+const TOOLS: Omit<ToolStatus, 'status' | 'lastPing'>[] = TOOL_CONFIGS.map(tool => ({
+  id: tool.id,
+  name: tool.name,
+  url: tool.url,
+}));
 
 // Format relative time
 export const formatRelativeTime = (date: Date): string => {

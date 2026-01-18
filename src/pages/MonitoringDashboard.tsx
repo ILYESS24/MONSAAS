@@ -68,6 +68,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { getAllMonitoredEndpoints, type ToolConfig } from "@/config/tools";
 
 // ============================================================================
 // Types & Interfaces
@@ -128,64 +129,17 @@ const STATUS_COLORS = {
   offline: "#ef4444",
 };
 
-// Demo endpoints
-const INITIAL_ENDPOINTS: MonitoredEndpoint[] = [
-  {
-    id: 'code-editor',
-    name: 'Code Editor',
-    url: 'https://eed972db.aurion-ide.pages.dev',
-    type: 'iframe',
-    refreshInterval: 60000,
-    timeout: 10000,
-    alerts: { sound: true },
-  },
-  {
-    id: 'app-builder',
-    name: 'App Builder',
-    url: 'https://production.ai-assistant-xlv.pages.dev',
-    type: 'iframe',
-    refreshInterval: 60000,
-    timeout: 10000,
-    alerts: { sound: true },
-  },
-  {
-    id: 'agent-ai',
-    name: 'Agent AI',
-    url: 'https://flo-9xh2.onrender.com/',
-    type: 'iframe',
-    refreshInterval: 60000,
-    timeout: 15000,
-    alerts: { sound: true },
-  },
-  {
-    id: 'aurion-chat',
-    name: 'Aurion Chat',
-    url: 'https://canvchat-1-y73q.onrender.com/',
-    type: 'iframe',
-    refreshInterval: 60000,
-    timeout: 15000,
-    alerts: { sound: true },
-  },
-  {
-    id: 'text-editor',
-    name: 'Text Editor',
-    url: 'https://4e2af144.aieditor.pages.dev',
-    type: 'iframe',
-    refreshInterval: 60000,
-    timeout: 10000,
-    alerts: { sound: true },
-  },
-  {
-    id: 'github-api',
-    name: 'GitHub API',
-    url: 'https://api.github.com',
-    type: 'api',
-    refreshInterval: 30000,
-    timeout: 5000,
-    expectedStatus: 200,
-    alerts: { sound: false },
-  },
-];
+// Generate endpoints from centralized tool configuration
+const INITIAL_ENDPOINTS: MonitoredEndpoint[] = getAllMonitoredEndpoints().map(tool => ({
+  id: tool.id,
+  name: tool.name,
+  url: tool.url,
+  type: tool.type,
+  refreshInterval: tool.refreshInterval,
+  timeout: tool.timeout,
+  expectedStatus: tool.type === 'api' ? 200 : undefined,
+  alerts: tool.alerts,
+}));
 
 // ============================================================================
 // State Reducer
