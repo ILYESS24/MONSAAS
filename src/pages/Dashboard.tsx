@@ -83,8 +83,8 @@ const TOOL_ROUTES: Record<string, string> = {
   'text-editor': '/text-editor',
 };
 
-// Lime/Yellow-Green accent color from reference
-const ACCENT_COLOR = "#D4FF00";
+// White accent color for clean modern look
+const ACCENT_COLOR = "#FFFFFF";
 
 // Navigation tabs - only Overview is functional, others are placeholder for future features
 const navTabs = [
@@ -335,7 +335,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
     return (
       <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center">
         <div className="text-white font-body text-center">
-          <div className="w-10 h-10 border-2 border-white/20 border-t-[#D4FF00] rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white/60 text-sm">Loading dashboard...</p>
         </div>
       </div>
@@ -369,7 +369,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
         <div className="flex flex-col h-full p-4">
           {/* Logo */}
           <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-[#D4FF00] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
               <span className="text-black font-bold text-lg">S</span>
             </div>
             <Link to="/" className="text-xl font-bold text-white">
@@ -463,7 +463,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 <Link
                   key={tab.id}
                   to={tab.route}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all bg-[#D4FF00] text-black font-medium"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all bg-white text-black font-medium"
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
@@ -542,7 +542,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="col-span-12 md:col-span-4 lg:col-span-3 bg-[#D4FF00] rounded-2xl p-5 relative overflow-hidden"
+              className="col-span-12 md:col-span-4 lg:col-span-3 bg-white rounded-2xl p-5 relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-black/60 text-sm font-medium">Active Campaign</span>
@@ -550,7 +550,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
               
               {/* Decorative patterns */}
-              <div className="absolute top-3 right-3 w-16 h-16 bg-[#B8E600] rounded-lg opacity-60" />
+              <div className="absolute top-3 right-3 w-16 h-16 bg-gray-200 rounded-lg opacity-60" />
               <div className="absolute top-12 right-12 w-10 h-10 bg-black/10 rounded-lg bg-[radial-gradient(circle,_black_1px,_transparent_1px)] bg-[size:4px_4px]" />
               
               <div className="mt-8">
@@ -613,7 +613,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#D4FF00]" />
+                    <div className="w-2 h-2 rounded-full bg-white" />
                     <span className="text-xs text-white/60">Mobile App</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -711,7 +711,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 </ResponsiveContainer>
                 
                 {/* Value Indicator */}
-                <div className="absolute top-0 left-1/4 bg-[#D4FF00] text-black text-xs px-2 py-1 rounded font-medium">
+                <div className="absolute top-0 left-1/4 bg-white text-black text-xs px-2 py-1 rounded font-medium">
                   $ 0
                 </div>
               </div>
@@ -896,15 +896,15 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.9 }}
-              className="mt-4 bg-gradient-to-r from-[#D4FF00]/20 to-green-500/20 border border-[#D4FF00]/30 rounded-2xl p-5"
+              className="mt-4 bg-gradient-to-r from-white/20 to-gray-500/20 border border-white/30 rounded-2xl p-5"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-[#D4FF00]/20 rounded-lg">
-                    <AlertCircle className="w-5 h-5 text-[#D4FF00]" />
+                  <div className="p-2 bg-white/20 rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#D4FF00]">
+                    <h4 className="font-semibold text-white">
                       {tasksDueToday} task{tasksDueToday !== 1 ? 's' : ''} due today
                     </h4>
                     <p className="text-white/60 text-sm mt-1">
@@ -915,7 +915,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-[#D4FF00] text-black px-5 py-2.5 rounded-xl font-medium text-sm"
+                  className="bg-white text-black px-5 py-2.5 rounded-xl font-medium text-sm"
                 >
                   View Tasks
                 </motion.button>
@@ -937,7 +937,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
               <Link 
                 to="/pricing"
-                className="text-sm text-[#D4FF00] hover:text-[#E5FF4D] flex items-center gap-1 transition-colors"
+                className="text-sm text-white hover:text-white/80 flex items-center gap-1 transition-colors"
               >
                 Voir tous les détails
                 <ArrowUpRight className="w-4 h-4" />
@@ -953,14 +953,14 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                     whileHover={{ scale: 1.02 }}
                     className={`relative rounded-2xl p-5 ${
                       plan.popular
-                        ? 'bg-gradient-to-b from-[#D4FF00]/20 to-[#1a1a1a] border-2 border-[#D4FF00]/50 shadow-lg shadow-[#D4FF00]/10'
+                        ? 'bg-gradient-to-b from-white/20 to-[#1a1a1a] border-2 border-white/50 shadow-lg shadow-white/10'
                         : 'bg-[#1a1a1a] border border-white/10'
                     }`}
                   >
                     {/* Badge */}
                     {plan.badge && (
                       <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs font-medium rounded-full ${
-                        plan.popular ? 'bg-[#D4FF00] text-black' : 'bg-white/20 text-white'
+                        plan.popular ? 'bg-white text-black' : 'bg-white/20 text-white'
                       }`}>
                         {plan.badge}
                       </div>
@@ -968,8 +968,8 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
 
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`p-2 rounded-lg ${plan.popular ? 'bg-[#D4FF00]/20' : 'bg-white/10'}`}>
-                        <Icon className={`w-5 h-5 ${plan.popular ? 'text-[#D4FF00]' : 'text-white/70'}`} />
+                      <div className={`p-2 rounded-lg ${plan.popular ? 'bg-white/20' : 'bg-white/10'}`}>
+                        <Icon className={`w-5 h-5 ${plan.popular ? 'text-white' : 'text-white/70'}`} />
                       </div>
                       <div>
                         <h3 className="font-semibold">{plan.name}</h3>
@@ -1008,7 +1008,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                       to="/pricing"
                       className={`block w-full text-center py-2.5 rounded-xl text-sm font-medium transition-colors ${
                         plan.popular
-                          ? 'bg-[#D4FF00] text-black hover:bg-[#E5FF4D]'
+                          ? 'bg-white text-black hover:bg-white/90'
                           : 'bg-white/10 text-white hover:bg-white/20'
                       }`}
                     >
@@ -1034,7 +1034,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
               <Link 
                 to="/pricing"
-                className="text-sm text-[#D4FF00] hover:text-[#E5FF4D] flex items-center gap-1 transition-colors"
+                className="text-sm text-white hover:text-white/80 flex items-center gap-1 transition-colors"
               >
                 Changer de plan
                 <ArrowUpRight className="w-4 h-4" />
@@ -1043,10 +1043,10 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Current Plan Card */}
-              <div className="bg-gradient-to-b from-[#D4FF00]/10 to-[#1a1a1a] border border-[#D4FF00]/30 rounded-2xl p-5">
+              <div className="bg-gradient-to-b from-white/10 to-[#1a1a1a] border border-white/30 rounded-2xl p-5">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-lg bg-[#D4FF00]/20">
-                    <Crown className="w-5 h-5 text-[#D4FF00]" />
+                  <div className="p-2 rounded-lg bg-white/20">
+                    <Crown className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold">{planInfo.name}</h3>
@@ -1059,7 +1059,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                 {currentPlan !== 'enterprise' && (
                   <Link
                     to="/pricing"
-                    className="block w-full text-center py-2 bg-[#D4FF00] text-black rounded-lg text-sm font-medium hover:bg-[#E5FF4D] transition-colors mt-4"
+                    className="block w-full text-center py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-white/90 transition-colors mt-4"
                   >
                     Passer au plan supérieur
                   </Link>
@@ -1075,7 +1075,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-[#D4FF00]" />
+                        <MessageSquare className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Chat</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1086,7 +1086,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                       <div 
                         className={`h-full rounded-full transition-all ${
                           getUsageInfo.chat.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.chat.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.chat.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: `${Math.min(getUsageInfo.chat.percentage, 100)}%` }}
                       />
@@ -1097,7 +1097,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Bot className="w-4 h-4 text-[#D4FF00]" />
+                        <Bot className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Agent AI</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1109,7 +1109,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                         className={`h-full rounded-full transition-all ${
                           !getUsageInfo.agentAI.enabled ? 'bg-white/20' :
                           getUsageInfo.agentAI.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.agentAI.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.agentAI.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: getUsageInfo.agentAI.enabled ? `${Math.min(getUsageInfo.agentAI.percentage, 100)}%` : '0%' }}
                       />
@@ -1120,7 +1120,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <PenTool className="w-4 h-4 text-[#D4FF00]" />
+                        <PenTool className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Canvas</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1131,7 +1131,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                       <div 
                         className={`h-full rounded-full transition-all ${
                           getUsageInfo.canvas.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.canvas.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.canvas.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: `${Math.min(getUsageInfo.canvas.percentage, 100)}%` }}
                       />
@@ -1142,7 +1142,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <FolderOpen className="w-4 h-4 text-[#D4FF00]" />
+                        <FolderOpen className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Projets</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1153,7 +1153,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                       <div 
                         className={`h-full rounded-full transition-all ${
                           getUsageInfo.projects.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.projects.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.projects.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: `${Math.min(getUsageInfo.projects.percentage, 100)}%` }}
                       />
@@ -1164,7 +1164,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-[#D4FF00]" />
+                        <Layers className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Stockage</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1175,7 +1175,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                       <div 
                         className={`h-full rounded-full transition-all ${
                           getUsageInfo.storage.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.storage.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.storage.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: `${Math.min(getUsageInfo.storage.percentage, 100)}%` }}
                       />
@@ -1186,7 +1186,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                   <div className="bg-white/5 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-[#D4FF00]" />
+                        <Activity className="w-4 h-4 text-white" />
                         <span className="text-xs text-white/60">Workflows</span>
                       </div>
                       <span className="text-xs text-white/40">
@@ -1198,7 +1198,7 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
                         className={`h-full rounded-full transition-all ${
                           !getUsageInfo.workflows.enabled ? 'bg-white/20' :
                           getUsageInfo.workflows.percentage >= 80 ? 'bg-red-500' : 
-                          getUsageInfo.workflows.percentage >= 50 ? 'bg-amber-500' : 'bg-[#D4FF00]'
+                          getUsageInfo.workflows.percentage >= 50 ? 'bg-amber-500' : 'bg-white'
                         }`}
                         style={{ width: getUsageInfo.workflows.enabled ? `${Math.min(getUsageInfo.workflows.percentage, 100)}%` : '0%' }}
                       />
