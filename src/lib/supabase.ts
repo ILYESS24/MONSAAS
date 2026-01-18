@@ -2,23 +2,28 @@
  * Supabase Client Configuration
  * 
  * Provides a configured Supabase client instance with proper type safety.
+ * 
+ * SECURITY: All credentials must be provided via environment variables.
+ * Never commit API keys to source control.
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { logger } from './logger';
+import { logger, securityLogger } from './logger';
 import type { Database } from '@/types/supabase';
 
-// Environment variables - with production fallback for demo
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ||
-  (import.meta.env.PROD ? 'https://otxxjczxwhtngcferckz.supabase.co' : undefined);
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  (import.meta.env.PROD ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90eHhqY3p4d2h0bmdjZmVyY2t6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NDcxOTEsImV4cCI6MjA4MTIyMzE5MX0.B4A300qQZCwP-aG4J29KfeazJM_Pp1eHKXQ98_bLMw8' : undefined);
+// Environment variables - REQUIRED, no fallbacks for security
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Clerk configuration - use demo key in production for testing
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  (import.meta.env.PROD ? 'pk_test_Y2xlcmsuYXVyaW9uLXN0dWRpby5kZXYk' : undefined);
-
-export { CLERK_PUBLISHABLE_KEY };
+// Validate configuration on load
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (import.meta.env.PROD) {
+    securityLogger.error('Supabase configuration missing in production', {
+      hasUrl: !!SUPABASE_URL,
+      hasKey: !!SUPABASE_ANON_KEY,
+    });
+  }
+}
 
 // Singleton instance
 let supabaseInstance: SupabaseClient<Database> | null = null;

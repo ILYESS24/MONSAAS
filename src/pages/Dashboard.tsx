@@ -86,7 +86,6 @@ const TOOL_ROUTES: Record<string, string> = {
 
 // Lime/Yellow-Green accent color from reference
 const ACCENT_COLOR = "#D4FF00";
-const ACCENT_DARK = "#B8E600";
 
 // Navigation tabs (matching reference image)
 const navTabs = [
@@ -182,14 +181,13 @@ const ToolStatusCard: React.FC<{ tool: ToolStatus; onClick: () => void }> = ({ t
 // Helper hook to safely use Clerk auth only when configured
 // Wrapper component for when Clerk auth IS configured
 function DashboardWithAuth() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isLoaded } = useAuth();
   const { user: clerkUser } = useUser();
   
   const userName = clerkUser?.firstName || clerkUser?.username || "User";
   
   return (
     <DashboardContent 
-      isSignedIn={isSignedIn}
       isLoaded={isLoaded}
       userName={userName}
       authEnabled={true}
@@ -201,7 +199,6 @@ function DashboardWithAuth() {
 function DashboardDemo() {
   return (
     <DashboardContent 
-      isSignedIn={false}
       isLoaded={true}
       userName="User"
       authEnabled={false}
@@ -219,13 +216,12 @@ const Dashboard = () => {
 
 // The actual dashboard content
 interface DashboardContentProps {
-  isSignedIn: boolean;
   isLoaded: boolean;
   userName: string;
   authEnabled: boolean;
 }
 
-const DashboardContent = ({ isSignedIn, isLoaded, userName, authEnabled }: DashboardContentProps) => {
+const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentProps) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
@@ -235,7 +231,7 @@ const DashboardContent = ({ isSignedIn, isLoaded, userName, authEnabled }: Dashb
   const liveStats = useLiveStats(30000);
   const liveActivities = useLiveActivity(8, 45000);
   const toolStatus = useToolStatus();
-  const currentTime = useCurrentTime();
+  useCurrentTime(); // Keep time updates for live functionality
   const { projects: recentProjects, isLoading: projectsLoading } = useProjects(4);
   const { tasksCount: tasksDueToday, isLoading: tasksLoading } = useTasksDueToday();
 

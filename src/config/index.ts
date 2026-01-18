@@ -18,13 +18,30 @@ export const APP_CONFIG = {
 } as const;
 
 /**
- * Feature flags
+ * Feature flags - control feature availability
+ * Use environment variables to toggle features
  */
 export const FEATURES = {
+  // Analytics & Monitoring
   ANALYTICS_ENABLED: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
   ERROR_REPORTING_ENABLED: import.meta.env.VITE_ENABLE_ERROR_REPORTING === 'true',
   PERFORMANCE_MONITORING_ENABLED: import.meta.env.VITE_ENABLE_PERFORMANCE_MONITORING === 'true',
+  
+  // Application Modes
   DEMO_MODE_ENABLED: !import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+  DEBUG_MODE_ENABLED: import.meta.env.DEV || import.meta.env.VITE_DEBUG_MODE === 'true',
+  
+  // Feature Toggles
+  ENABLE_PWA: import.meta.env.VITE_ENABLE_PWA === 'true',
+  ENABLE_OFFLINE_MODE: import.meta.env.VITE_ENABLE_OFFLINE_MODE === 'true',
+  ENABLE_MULTI_TENANT: import.meta.env.VITE_ENABLE_MULTI_TENANT === 'true',
+  
+  // Tools Availability
+  ENABLE_CODE_EDITOR: true,
+  ENABLE_APP_BUILDER: true,
+  ENABLE_AGENT_AI: true,
+  ENABLE_AURION_CHAT: true,
+  ENABLE_TEXT_EDITOR: true,
 } as const;
 
 /**
@@ -65,6 +82,13 @@ export const SECURITY_CONFIG = {
   LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
 } as const;
 
+/**
+ * Helper to check if a feature is enabled
+ */
+export function isFeatureEnabled(feature: keyof typeof FEATURES): boolean {
+  return FEATURES[feature] === true;
+}
+
 export default {
   APP_CONFIG,
   FEATURES,
@@ -72,4 +96,5 @@ export default {
   AUTH_CONFIG,
   DASHBOARD_CONFIG,
   SECURITY_CONFIG,
+  isFeatureEnabled,
 };

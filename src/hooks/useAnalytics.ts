@@ -216,7 +216,7 @@ export function useAnalytics() {
 export function usePerformanceMonitoring() {
   useEffect(() => {
     // Only run in browser
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return undefined;
 
     const reportPerformance = () => {
       const navigationEntries = performance.getEntriesByType('navigation');
@@ -242,6 +242,7 @@ export function usePerformanceMonitoring() {
     // Report after page load
     if (document.readyState === 'complete') {
       reportPerformance();
+      return undefined;
     } else {
       window.addEventListener('load', reportPerformance);
       return () => window.removeEventListener('load', reportPerformance);

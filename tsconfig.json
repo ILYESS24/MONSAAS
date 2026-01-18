@@ -14,7 +14,18 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    "strict": false,
+    /* Strict Type-Checking Options - Progressive enablement */
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    /* Temporarily relaxed for gradual migration */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
     "paths": {
       "@/*": ["./src/*"]
     }

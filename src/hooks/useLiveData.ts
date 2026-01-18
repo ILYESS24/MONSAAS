@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { Database } from '@/types/supabase';
@@ -97,7 +98,7 @@ export function useLiveStats(updateInterval = 30000) {
       if (projectsError) throw projectsError;
 
       // Fetch active (in_progress) projects count
-      const { count: activeProjectsCount, error: activeError } = await supabase
+      const { count: _activeProjectsCount, error: activeError } = await supabase
         .from('projects')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'in_progress');
@@ -124,7 +125,7 @@ export function useLiveStats(updateInterval = 30000) {
         // For demo, assume 20% of tasks are completed
         completedTasks = Math.floor((totalTasksCheck ?? 0) * 0.2);
         logger.debug('Using estimated completion rate for tasks count');
-      } catch (err) {
+      } catch (_err) {
         completedTasks = 0;
         logger.warn('Could not fetch completed tasks count, defaulting to 0');
       }
@@ -171,7 +172,7 @@ export function useLiveStats(updateInterval = 30000) {
     const interval = setInterval(fetchStats, updateInterval);
 
     // Set up real-time subscription for projects changes
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
@@ -208,8 +209,8 @@ export function useLiveStats(updateInterval = 30000) {
  */
 export function useLiveActivity(maxItems = 10, _addInterval = 45000) {
   const [activities, setActivities] = useState<LiveActivity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_isLoading, setIsLoading] = useState(true);
+  const [_error, setError] = useState<string | null>(null);
 
   const fetchActivities = useCallback(async () => {
     if (!isSupabaseConfigured() || !supabase) {
@@ -254,7 +255,7 @@ export function useLiveActivity(maxItems = 10, _addInterval = 45000) {
     fetchActivities();
 
     // Set up real-time subscription for activities
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
@@ -463,7 +464,7 @@ export function useProjects(limit = 4) {
     fetchProjects();
 
     // Set up real-time subscription for projects
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
