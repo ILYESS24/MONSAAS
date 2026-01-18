@@ -15,12 +15,10 @@ import {
 import {
   LayoutDashboard,
   FolderOpen,
-  Settings,
   Users,
   BarChart3,
   Bell,
   Search,
-  Plus,
   ChevronRight,
   TrendingUp,
   Clock,
@@ -46,8 +44,6 @@ import {
   UserCircle,
   ChevronDown,
   Calendar,
-  Smartphone,
-  Globe,
 } from "lucide-react";
 import {
   AreaChart,
@@ -184,24 +180,6 @@ const ToolStatusCard: React.FC<{ tool: ToolStatus; onClick: () => void }> = ({ t
 };
 
 // Helper hook to safely use Clerk auth only when configured
-function useOptionalAuth() {
-  const authConfigured = isAuthConfigured();
-  
-  // These hooks will only be called when Clerk is configured
-  // In demo mode, we return default values
-  if (!authConfigured) {
-    return {
-      isSignedIn: false,
-      isLoaded: true,
-      user: null,
-      userName: "User",
-    };
-  }
-  
-  // Return placeholder - actual implementation below
-  return null;
-}
-
 // Wrapper component for when Clerk auth IS configured
 function DashboardWithAuth() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -475,11 +453,9 @@ const DashboardContent = ({ isSignedIn, isLoaded, userName, authEnabled }: Dashb
                     }}
                   />
                 ) : (
-                  <img 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" 
-                    alt="User"
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                    U
+                  </div>
                 )}
               </div>
             </div>
@@ -561,7 +537,7 @@ const DashboardContent = ({ isSignedIn, isLoaded, userName, authEnabled }: Dashb
               
               {/* Decorative patterns */}
               <div className="absolute top-3 right-3 w-16 h-16 bg-[#B8E600] rounded-lg opacity-60" />
-              <div className="absolute top-12 right-12 w-10 h-10 bg-black/10 rounded-lg" style={{ backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)', backgroundSize: '4px 4px' }} />
+              <div className="absolute top-12 right-12 w-10 h-10 bg-black/10 rounded-lg bg-[radial-gradient(circle,_black_1px,_transparent_1px)] bg-[size:4px_4px]" />
               
               <div className="mt-8">
                 <div className="flex items-baseline gap-2">
