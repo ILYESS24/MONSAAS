@@ -18,6 +18,7 @@ export const ROUTES = {
   ABOUT: '/about',
   BLOG: '/blog',
   CONTACT: '/contact',
+  PRICING: '/pricing',
   PRIVACY: '/privacy',
   TERMS: '/terms',
   COOKIES: '/cookies',
