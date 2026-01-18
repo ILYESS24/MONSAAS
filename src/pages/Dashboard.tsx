@@ -38,6 +38,11 @@ import {
   Loader2,
   Megaphone,
   Calendar,
+  Check,
+  Zap,
+  Shield,
+  Crown,
+  Rocket,
 } from "lucide-react";
 import {
   AreaChart,
@@ -109,6 +114,82 @@ const salesTrendsData = [
   { month: 'Apr', value: 0 },
   { month: 'May', value: 0 },
   { month: 'Jun', value: 0 },
+];
+
+// Pricing plans data for dashboard section
+const DASHBOARD_PRICING_PLANS = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    period: '/mois',
+    icon: Zap,
+    popular: false,
+    features: [
+      '3 projets actifs',
+      '1 Go de stockage',
+      'Code Editor basique',
+      'Text Editor',
+      'Support communautaire',
+    ],
+    notIncluded: ['Agent AI', 'App Builder', 'Workflow Automation'],
+  },
+  {
+    id: 'starter',
+    name: 'Starter',
+    price: 19,
+    period: '/mois',
+    icon: Shield,
+    popular: false,
+    features: [
+      '10 projets actifs',
+      '10 Go de stockage',
+      'Code Editor complet',
+      'Agent AI (100 req/mois)',
+      'App Builder basique',
+      'Support email',
+    ],
+    notIncluded: ['Workflow Automation', 'Monitoring'],
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: 49,
+    period: '/mois',
+    icon: Crown,
+    popular: true,
+    badge: '🔥 Populaire',
+    features: [
+      'Projets illimités',
+      '100 Go de stockage',
+      'Agent AI (1000 req/mois)',
+      'App Builder complet',
+      'Workflow Automation',
+      'Monitoring Dashboard',
+      'Support prioritaire 24/7',
+      'API Access complet',
+    ],
+    notIncluded: [],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 199,
+    period: '/mois',
+    icon: Rocket,
+    popular: false,
+    badge: 'SLA 99.9%',
+    features: [
+      'Projets illimités',
+      'Stockage illimité',
+      'Agent AI illimité',
+      'SSO / SAML',
+      'Account Manager dédié',
+      'Déploiement on-premise',
+      'Support personnalisé',
+    ],
+    notIncluded: [],
+  },
 ];
 
 // Tool Status Card Component
@@ -832,6 +913,103 @@ const DashboardContent = ({ isLoaded, userName, authEnabled }: DashboardContentP
               </div>
             </motion.div>
           )}
+
+          {/* Pricing Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.0 }}
+            className="mt-8"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold">Plans & Abonnements</h2>
+                <p className="text-white/50 text-sm mt-1">Choisissez le plan adapté à vos besoins</p>
+              </div>
+              <Link 
+                to="/pricing"
+                className="text-sm text-[#D4FF00] hover:text-[#E5FF4D] flex items-center gap-1 transition-colors"
+              >
+                Voir tous les détails
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {DASHBOARD_PRICING_PLANS.map((plan) => {
+                const Icon = plan.icon;
+                return (
+                  <motion.div
+                    key={plan.id}
+                    whileHover={{ scale: 1.02 }}
+                    className={`relative rounded-2xl p-5 ${
+                      plan.popular
+                        ? 'bg-gradient-to-b from-[#D4FF00]/20 to-[#1a1a1a] border-2 border-[#D4FF00]/50 shadow-lg shadow-[#D4FF00]/10'
+                        : 'bg-[#1a1a1a] border border-white/10'
+                    }`}
+                  >
+                    {/* Badge */}
+                    {plan.badge && (
+                      <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs font-medium rounded-full ${
+                        plan.popular ? 'bg-[#D4FF00] text-black' : 'bg-white/20 text-white'
+                      }`}>
+                        {plan.badge}
+                      </div>
+                    )}
+
+                    {/* Header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`p-2 rounded-lg ${plan.popular ? 'bg-[#D4FF00]/20' : 'bg-white/10'}`}>
+                        <Icon className={`w-5 h-5 ${plan.popular ? 'text-[#D4FF00]' : 'text-white/70'}`} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{plan.name}</h3>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="mb-4">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-bold">
+                          {plan.price === 0 ? 'Gratuit' : `€${plan.price}`}
+                        </span>
+                        {plan.price > 0 && (
+                          <span className="text-white/40 text-sm">{plan.period}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Features */}
+                    <ul className="space-y-2 mb-4">
+                      {plan.features.slice(0, 5).map((feature, index) => (
+                        <li key={index} className="flex items-start gap-2 text-xs">
+                          <Check className="w-3.5 h-3.5 text-green-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-white/70">{feature}</span>
+                        </li>
+                      ))}
+                      {plan.features.length > 5 && (
+                        <li className="text-xs text-white/40 pl-5">
+                          +{plan.features.length - 5} fonctionnalités
+                        </li>
+                      )}
+                    </ul>
+
+                    {/* CTA Button */}
+                    <Link
+                      to="/pricing"
+                      className={`block w-full text-center py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                        plan.popular
+                          ? 'bg-[#D4FF00] text-black hover:bg-[#E5FF4D]'
+                          : 'bg-white/10 text-white hover:bg-white/20'
+                      }`}
+                    >
+                      {plan.price === 0 ? 'Commencer' : 'Choisir'}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </main>
       </div>
     </div>
