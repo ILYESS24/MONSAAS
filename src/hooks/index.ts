@@ -45,3 +45,7 @@ export {
 
 // Mobile hook
 export { useIsMobile } from './use-mobile';
+
+// Subscription hook
+export { useSubscription } from './useSubscription';
+export type { ToolAccessResult } from './useSubscription';

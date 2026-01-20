@@ -3,6 +3,13 @@
  * 
  * Application-wide providers wrapped in a single component.
  * Simplifies the provider hierarchy in main.tsx.
+ * 
+ * Includes:
+ * - React Query for data fetching
+ * - Clerk for authentication
+ * - App context for global state
+ * - Notification context
+ * - Error boundary
  */
 
 import { ReactNode } from 'react';
@@ -10,7 +17,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { AppProvider, NotificationProvider } from '@/contexts';
 import { ErrorBoundary } from '@/components/common';
-import { getClerkPublishableKey, getEnvConfig } from '@/lib/env';
+import { QueryProvider } from '@/lib/queryClient';
+import { getClerkPublishableKey } from '@/lib/env';
 import { logger } from '@/lib/logger';
 
 interface AppProvidersProps {
@@ -62,11 +70,13 @@ function ConfigurationError() {
 function CoreProviders({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
-      <AppProvider>
-        <NotificationProvider>
-          {children}
-        </NotificationProvider>
-      </AppProvider>
+      <QueryProvider>
+        <AppProvider>
+          <NotificationProvider>
+            {children}
+          </NotificationProvider>
+        </AppProvider>
+      </QueryProvider>
     </ErrorBoundary>
   );
 }
@@ -76,18 +86,27 @@ function CoreProviders({ children }: { children: ReactNode }) {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   const clerkKey = getClerkPublishableKey();
-  const { IS_PRODUCTION } = getEnvConfig();
   const basename = import.meta.env.BASE_URL;
 
-  // Use Clerk authentication with real keys
-  logger.info('Running with Clerk authentication - Real user authentication enabled');
+  // Check if Clerk is configured
+  const hasClerkKey = !!clerkKey;
+
+  if (hasClerkKey) {
+    logger.info('Running with Clerk authentication - Real user authentication enabled');
+  } else {
+    logger.info('Running in demo mode - Authentication disabled');
+  }
 
   return (
     <BrowserRouter basename={basename}>
       <CoreProviders>
-        <ClerkProvider publishableKey={clerkKey} appearance={clerkAppearance}>
-          {children}
-        </ClerkProvider>
+        {hasClerkKey ? (
+          <ClerkProvider publishableKey={clerkKey} appearance={clerkAppearance}>
+            {children}
+          </ClerkProvider>
+        ) : (
+          children
+        )}
       </CoreProviders>
     </BrowserRouter>
   );

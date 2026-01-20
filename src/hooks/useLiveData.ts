@@ -6,9 +6,10 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { TOOLS as TOOL_CONFIGS } from '@/config/tools';
 import type { Database } from '@/types/supabase';
 
 // Types for live data
@@ -38,14 +39,12 @@ export interface ToolStatus {
   url: string;
 }
 
-// Tool configuration - removed problematic Vercel service
-const TOOLS: Omit<ToolStatus, 'status' | 'lastPing'>[] = [
-  { id: 'code-editor', name: 'Code Editor', url: 'https://eed972db.aurion-ide.pages.dev' },
-  { id: 'app-builder', name: 'App Builder', url: 'https://production.ai-assistant-xlv.pages.dev' },
-  { id: 'agent-ai', name: 'Agent AI', url: 'https://flo-9xh2.onrender.com/' },
-  { id: 'aurion-chat', name: 'Aurion Chat', url: 'https://canvchat-1-y73q.onrender.com/' },
-  { id: 'text-editor', name: 'Text Editor', url: 'https://4e2af144.aieditor.pages.dev' },
-];
+// Tool configuration - centralized in src/config/tools.ts
+const TOOLS: Omit<ToolStatus, 'status' | 'lastPing'>[] = TOOL_CONFIGS.map(tool => ({
+  id: tool.id,
+  name: tool.name,
+  url: tool.url,
+}));
 
 // Format relative time
 export const formatRelativeTime = (date: Date): string => {
@@ -66,7 +65,8 @@ export const formatRelativeTime = (date: Date): string => {
  * Fetches real data from Supabase
  */
 export function useLiveStats(updateInterval = 30000) {
-  const { userId } = useAuth();
+  // Note: userId filtering removed for demo mode compatibility
+  // In production with Clerk, you would use the userId from useAuth()
   const [stats, setStats] = useState<LiveStats>({
     totalProjects: 0,
     activeUsers: 0,
@@ -97,18 +97,10 @@ export function useLiveStats(updateInterval = 30000) {
       if (projectsError) throw projectsError;
 
       // Fetch active (in_progress) projects count
-      // Filter by user when authenticated, or show global stats
-      let projectQuery = supabase
+      const { count: _activeProjectsCount, error: activeError } = await supabase
         .from('projects')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'in_progress');
-
-      // If user is authenticated, filter by user_id
-      if (userId) {
-        projectQuery = projectQuery.eq('user_id', userId);
-      }
-
-      const { count: activeProjectsCount, error: activeError } = await projectQuery;
 
       if (activeError) throw activeError;
 
@@ -132,7 +124,7 @@ export function useLiveStats(updateInterval = 30000) {
         // For demo, assume 20% of tasks are completed
         completedTasks = Math.floor((totalTasksCheck ?? 0) * 0.2);
         logger.debug('Using estimated completion rate for tasks count');
-      } catch (err) {
+      } catch (_err) {
         completedTasks = 0;
         logger.warn('Could not fetch completed tasks count, defaulting to 0');
       }
@@ -179,7 +171,7 @@ export function useLiveStats(updateInterval = 30000) {
     const interval = setInterval(fetchStats, updateInterval);
 
     // Set up real-time subscription for projects changes
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
@@ -216,8 +208,8 @@ export function useLiveStats(updateInterval = 30000) {
  */
 export function useLiveActivity(maxItems = 10, _addInterval = 45000) {
   const [activities, setActivities] = useState<LiveActivity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_isLoading, setIsLoading] = useState(true);
+  const [_error, setError] = useState<string | null>(null);
 
   const fetchActivities = useCallback(async () => {
     if (!isSupabaseConfigured() || !supabase) {
@@ -262,7 +254,7 @@ export function useLiveActivity(maxItems = 10, _addInterval = 45000) {
     fetchActivities();
 
     // Set up real-time subscription for activities
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
@@ -471,7 +463,7 @@ export function useProjects(limit = 4) {
     fetchProjects();
 
     // Set up real-time subscription for projects
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    let subscription: RealtimeChannel | null = null;
     
     if (isSupabaseConfigured() && supabase) {
       subscription = supabase
